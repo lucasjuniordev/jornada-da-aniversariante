@@ -1,0 +1,3 @@
+# Site pessoal: fora das buscas (inclusive imagens e vídeo). Não bloquear no robots.txt, senão o WhatsApp não lê a prévia.
+/*
+  X-Robots-Tag: noindex, nofollow
