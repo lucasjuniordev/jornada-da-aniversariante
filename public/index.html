@@ -130,7 +130,7 @@ const MODS = [
       ['Quer ir num dia em que no dia seguinte você não trabalha?', 'folga'],
       ['Prefere deixar pro fim da semana?', 'fim'],
       ['Gosta de cinema mais vazio?', 'vazio'],
-      ['Topa esperar a programação nova, que entra na quinta?', 'estreia'],
+      ['Prefere ir de quinta-feira em diante?', 'estreia'],
     ] },
   { key:'comida', label:'Comida', emoji:'🍿', missao:'O Grande Banquete', conquista:['🍗','Mestra do Banquete'], titulo:'O que você quer comer?',
     intro:'Pipoca na sala ou algo da praça de alimentação? Vamos ver o que sua barriga diz.',
@@ -238,6 +238,9 @@ const MODS = [
     ] },
 ];
 MODS.forEach(m => m.cands.forEach(c => c.tags = new Set(c.t.split(' '))));
+// shortcut: 26 a 28/11 ainda sem programação publicada; repete a de quarta (25). Trocar pelos horários reais quando saírem.
+const PREVISTO = 26;
+MODS[0].cands.forEach(c => { for (const d of [26, 27, 28]) c.s[d] ??= c.s[25].replace('(pré-estreia)', ''); });
 
 const ANS = [['Sim',1],['Provavelmente',.75],['Não sei',.5],['Acho que não',.25],['Não',0]];
 const MIN_Q = 3, SURE = .6, MAX_WRONG = 3;
@@ -351,12 +354,12 @@ function done(c, critico) {
 function sessao(c) {
   const s = result.filme.s?.[c.dt];
   if (s) {
-    view(`<p class="kicker">Escolha a hora da batalha</p><h2>Qual sessão de ${esc(result.filme.n)}?</h2><p>${esc(c.n)}</p>
+    view(`<p class="kicker">Escolha a hora da batalha</p><h2>Qual sessão de ${esc(result.filme.n)}?</h2><p>${esc(c.n)}${c.dt >= PREVISTO ? '<br><small>Horários previstos, iguais aos desta semana. Seu escudeiro confirma na compra.</small>' : ''}</p>
       <div class="answers">${s.split(' ').map(t => `<button data-v="${t}">${t.replace('(', ' · ').replace(')', '')}</button>`).join('')}<button class="ghost" data-v="">Decido depois</button></div>`);
-    return on('.answers button', v => { result.dia.sessao = v.replace('(', ' ').replace(')', ''); celebrate(); });
+    return on('.answers button', v => { result.dia.sessao = v.replace('(', ' ').replace(')', '') + (v && c.dt >= PREVISTO ? ' (previsto)' : ''); celebrate(); });
   }
   view(`<p class="kicker">Anotado!</p><div class="big">${esc(c.n)}</div>
-    <p>Os horários desse dia ainda não saíram (o cinema publica a programação nova no meio da semana). Seu escudeiro confere e te avisa a sessão.</p><button class="primary">Continuar</button>`);
+    <p>Seu escudeiro confere os horários desse filme e te avisa a sessão.</p><button class="primary">Continuar</button>`);
   on('button', celebrate);
 }
 function celebrate() {
