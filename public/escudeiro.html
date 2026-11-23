@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Diário do Escudeiro</title>
+<link rel="icon" href="img/escudo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Alegreya:wght@700;800&family=Alegreya+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --night:#121833; --wood:#4a2c17; --gold:#e3ae4a; --gold3:#9a6a1f; --parch:#f6e9c8; --parch2:#e8cf98; --ink:#2b1c10; --ink2:#5a432c; --ruby:#a8323f; --emerald:#2f8f5b; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; font:500 17px/1.5 'Alegreya Sans', system-ui, sans-serif; color:var(--ink); padding:20px 18px 40px;
+    background:linear-gradient(180deg, #0b0f24dd, #0b0f24aa), var(--night) url(img/cenario.webp) 62% center / cover fixed; }
+  main { max-width:640px; margin:0 auto; }
+  header { display:flex; align-items:center; gap:14px; color:var(--parch); margin-bottom:18px; }
+  header img { width:64px; height:64px; border-radius:50%; border:3px solid var(--gold); object-fit:cover; }
+  h1 { font:700 clamp(22px, 6vw, 30px) 'Cinzel Decorative', Georgia, serif; margin:0; color:#ffe3a1; }
+  header p { margin:0; color:#f6e9c8cc; }
+  .card { background:radial-gradient(ellipse at 50% 30%, #fbf2da, var(--parch) 60%, var(--parch2)); border:3px solid var(--gold);
+    box-shadow:0 0 0 6px var(--wood), 0 16px 34px #000a; border-radius:12px; padding:18px; margin:0 6px 26px; }
+  label { display:block; font-weight:800; margin-bottom:6px; }
+  input { width:100%; font:inherit; padding:12px; border:2px solid #b48a4a; border-radius:10px; background:#fffaf0; margin-bottom:12px; }
+  button { font:800 17px 'Alegreya Sans', sans-serif; cursor:pointer; min-height:44px; padding:10px 20px; border-radius:12px; border:2px solid var(--gold);
+    color:#fff4da; background:linear-gradient(180deg, #cf5262, #7d1f2c); box-shadow:0 3px 0 #4e111b; }
+  button.sec { color:var(--ink); background:linear-gradient(180deg, #fffaf0, #f1dfb4); border-color:#b48a4a; box-shadow:0 3px 0 #8b6532; }
+  button:focus-visible, input:focus-visible { outline:3px solid #2c5bd8; outline-offset:3px; }
+  .topo { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .selo { display:inline-block; font-weight:800; font-size:13px; padding:3px 10px; border-radius:999px; color:#fff; background:var(--emerald); }
+  .selo.andamento { background:#b9802a; }
+  .quando { font-size:14px; color:var(--ink2); }
+  dl { margin:0; display:grid; grid-template-columns:auto 1fr; gap:8px 14px; }
+  dt { font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ruby); font-weight:800; padding-top:4px; }
+  dd { margin:0; font:800 18px/1.3 Alegreya, Georgia, serif; }
+  dd i { display:block; font:500 15px 'Alegreya Sans', sans-serif; font-style:normal; color:var(--ink2); }
+  dd.falta { color:#9b8b78; font-weight:500; font-style:italic; }
+  .msg { color:#ffe3a1; text-align:center; }
+</style>
+</head>
+<body>
+<main>
+  <header><img src="img/escudeiro.webp" alt=""><div><h1>Diário do Escudeiro</h1><p>O que a aventureira já revelou.</p></div></header>
+  <form class="card" id="entrar" hidden>
+    <label for="chave">Chave do escudeiro</label>
+    <input id="chave" type="password" autocomplete="current-password" required>
+    <button>Abrir o diário</button>
+  </form>
+  <div id="lista" aria-live="polite"></div>
+</main>
+<script>
+const CAMPOS = [['filme', 'Filme'], ['dia', 'Dia'], ['comida', 'Banquete'], ['presente', 'Tesouro'], ['festa', 'Celebração']];
+const esc = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[ch]));
+const lista = document.getElementById('lista'), form = document.getElementById('entrar');
+const ler = () => { try { return localStorage.getItem('escudeiro-chave') || ''; } catch { return ''; } };
+const gravar = v => { try { v ? localStorage.setItem('escudeiro-chave', v) : localStorage.removeItem('escudeiro-chave'); } catch {} };
+
+async function abrir(chave) {
+  lista.innerHTML = '<p class="msg">Abrindo o diário...</p>';
+  let r;
+  try { r = await fetch('/api/respostas', { headers:{ authorization:`Bearer ${chave}` }, cache:'no-store' }); }
+  catch { lista.innerHTML = '<p class="msg">Sem conexão. Tente de novo.</p>'; return; }
+  if (r.status === 401) { gravar(''); form.hidden = false; lista.innerHTML = '<p class="msg">Chave errada.</p>'; return; }
+  if (!r.ok) { lista.innerHTML = '<p class="msg">O diário não abriu agora. Tente de novo.</p>'; return; }
+  gravar(chave); form.hidden = true;
+  const itens = await r.json();
+  if (!itens.length) { lista.innerHTML = '<div class="card"><p>Nenhuma resposta ainda. Assim que a Vitória concluir a primeira missão, ela aparece aqui.</p><button class="sec" id="atualizar">Atualizar</button></div>'; }
+  else lista.innerHTML = itens.map(j => `<article class="card">
+      <div class="topo"><span class="selo${j.completa ? '' : ' andamento'}">${j.completa ? 'Jornada completa' : 'Em andamento'} · nível ${esc(j.nivel)}</span>
+        <span class="quando">${new Date(j.atualizado).toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' })}</span></div>
+      <dl>${CAMPOS.map(([k, rot]) => { const r = j.respostas[k]; return `<dt>${rot}</dt>` + (r ? `<dd>${esc(r.n)}${r.sessao ? `<i>Sessão: ${esc(r.sessao)}</i>` : ''}${r.c ? `<i>Categoria: ${esc(r.c)}</i>` : ''}${r.dica ? `<i>Pista: ${esc(r.dica)}</i>` : ''}</dd>` : '<dd class="falta">ainda não revelado</dd>'); }).join('')}</dl>
+    </article>`).join('') + '<p style="text-align:center"><button class="sec" id="atualizar">Atualizar</button></p>';
+  document.getElementById('atualizar').onclick = () => abrir(chave);
+}
+form.onsubmit = e => { e.preventDefault(); abrir(document.getElementById('chave').value.trim()); };
+const salva = ler();
+if (salva) abrir(salva); else form.hidden = false;
+</script>
+</body>
+</html>

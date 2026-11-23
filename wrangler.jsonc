@@ -1,12 +1,18 @@
 {
   "$schema": "https://developers.cloudflare.com/workers/wrangler/config-schema.json",
   "name": "jornada-da-aniversariante",
+  "main": "src/index.js",
   "compatibility_date": "2026-11-23",
   "workers_dev": false,
   "preview_urls": true,
   "routes": [
     { "pattern": "jornada.lucasjrdev.com", "custom_domain": true }
   ],
-  "assets": { "directory": "./public" },
+  // /api/* passa pelo Worker; o resto sai direto dos assets
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  // respostas da jornada; a chave da página /escudeiro é o secret ESCUDEIRO_CHAVE (wrangler secret put)
+  "kv_namespaces": [
+    { "binding": "RESPOSTAS", "id": "2f9697dc95a740e4bab1c7b1a3e05ded" }
+  ],
   "previews": {}
 }
