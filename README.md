@@ -11,6 +11,11 @@ No ar em https://jornada.lucasjrdev.com · diário do escudeiro em https://jorna
 - `src/index.js`: Worker com `POST /api/respostas` (salva o que já foi descoberto, por jogada) e `GET /api/respostas` (lista) e `DELETE /api/respostas[?jogada=<id>]` (apaga uma jogada ou todas, para limpar os testes); os dois exigem `Authorization: Bearer <chave>`. O resto é servido direto dos assets.
 - KV `RESPOSTAS` guarda as jogadas; a chave é o secret `ESCUDEIRO_CHAVE` (`npx wrangler secret put ESCUDEIRO_CHAVE`), nunca no repositório.
 
+Opções com foto: filme, comida e presente abrem a missão com a galeria das opções (dá pra escolher direto), as perguntas mostram em quem o escudeiro está pensando e o palpite vem com foto.
+
+- Filmes: programação do Cinemark Taguatinga Shopping (cinema F0197 no AdoroCinema, endpoint `/_/showtimes/theater-F0197/d-AAAA-MM-DD/`), sessões a partir das 15h, raspada em 23/11. Pôsteres em `public/img/filmes/`.
+- Fotos de comida e presentes: Unsplash (licença Unsplash), recortadas em 480×360 em `public/img/comida/` e `public/img/presente/`.
+
 Som: `public/sons/fanfarra.mp3` ("Success Fanfare Trumpets", freesound_community no Pixabay), tocado só nas conquistas e no final.
 
 ## Rodar localmente

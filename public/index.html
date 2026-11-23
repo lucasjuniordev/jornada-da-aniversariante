@@ -151,6 +151,7 @@
   .slot { width:60px; height:60px; border-radius:10px; display:grid; place-items:center; background:radial-gradient(circle at 50% 35%, #2c366e, #121833);
     border:2px solid var(--gold); box-shadow:inset 0 0 10px #000a; }
   .slot img { width:48px; height:48px; }
+  .slot img[src*='/'] { width:100%; height:100%; border-radius:8px; object-fit:cover; }
   .inv b { display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ruby); }
   .inv .v { font:800 19px/1.25 Alegreya, Georgia, serif; color:var(--ink); }
   .inv i { display:block; font-style:normal; font-size:15px; color:var(--ink2); }
@@ -159,6 +160,25 @@
     box-shadow:0 4px 0 #0f5a2e, inset 0 1px 0 #ffffff55; text-shadow:0 1px 0 #0006; }
   .actions #copy { padding:12px; border-radius:12px; border:2px solid #b48a4a; background:linear-gradient(180deg, #fffaf0, #f1dfb4); box-shadow:0 3px 0 #8b6532; }
   .note { font-size:15px; margin-top:14px; }
+
+  /* opções com foto: abertura da missão, lista de escolha, palpite e pista */
+  .opcoes { display:grid; grid-template-columns:repeat(auto-fill, minmax(138px, 1fr)); gap:10px; margin:0 0 6px; text-align:left; }
+  .opcao { display:flex; flex-direction:column; padding:0; overflow:hidden; border-radius:10px; background:#fffaf0; border:2px solid #b48a4a;
+    box-shadow:0 3px 0 #8b6532; }
+  .opcao:hover { border-color:var(--gold); transform:translateY(-1px); }
+  .opcao:active { transform:translateY(2px); box-shadow:0 1px 0 #8b6532; }
+  .opcao img { display:block; width:100%; aspect-ratio:4 / 3; object-fit:cover; background:#e8cf98; }
+  .opcao.poster img { aspect-ratio:2 / 3; }
+  .opcao b { display:block; padding:8px 9px 2px; font:800 16px/1.2 Alegreya, Georgia, serif; overflow-wrap:break-word; }
+  .opcao small { display:block; padding:0 9px 9px; font-size:13px; font-weight:500; line-height:1.3; color:var(--ink2); }
+  .opcao small.sin { margin-top:-4px; font-style:italic; }
+  .ou { font-size:15px; margin:18px 0 10px; }
+  .foto { display:block; width:min(100%, 280px); aspect-ratio:4 / 3; object-fit:cover; margin:0 auto 12px; border-radius:10px;
+    border:3px solid var(--gold); box-shadow:0 0 0 3px var(--wood), 0 8px 18px #0005; }
+  .foto.poster { width:170px; aspect-ratio:2 / 3; }
+  .pista { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:12px 0 2px; font-size:14px; color:var(--ink2); }
+  .pista img { width:46px; height:46px; border-radius:50%; object-fit:cover; border:2px solid var(--gold); box-shadow:0 2px 5px #0004; }
+  .pista img + img { margin-left:-14px; }
 
   @media (max-width:420px) {
     body { font-size:17px; }
@@ -211,17 +231,17 @@ const MODS = [
     intro:'Cinemark Taguatinga Shopping. Só entraram filmes com sessão depois das 15h, já que você sai do trabalho às 14h.',
     maxQ:7, cands:[
       // s = sessões a partir das 15h, por dia (AdoroCinema, consultado em 23/11). Dia ausente = programação ainda não publicada.
-      { n:'Jogos Vorazes: Amanhecer na Colheita', d:'Aventura, ação · 16 anos · dublado', t:'acao aventura tenso franquia dublado pesado emocionante drama',
+      { n:'Jogos Vorazes: Amanhecer na Colheita', img:'filmes/jogos-vorazes', d:'Aventura, ação · 2h38 · 16 anos · dublado', sin:'Antes da Katniss: o jovem Haymitch vai para a arena e desafia a Capital.', t:'acao aventura tenso franquia dublado pesado emocionante drama',
         s:{ 23:'15:00 15:30 16:40 17:00(XD) 17:20 18:10 18:30 19:00 19:30 20:00 20:30(XD) 20:50 21:20 21:40 22:00', 24:'15:00 15:30 16:40 17:00(XD) 17:20 18:10 18:30 19:00 19:30 20:00 20:30(XD) 20:50 21:20 21:40 22:00', 25:'15:30 16:40 17:00(XD) 17:20 17:40 18:10 19:00 19:40 20:00 20:30(XD) 20:50 21:05 21:40 22:00' } },
-      { n:'Eu Sou o Rocky', d:'A história real do Stallone · 12 anos · dublado', t:'real drama emocionante dublado',
+      { n:'Eu Sou o Rocky', img:'filmes/rocky', d:'Drama real · 2h08 · 12 anos · dublado', sin:'Como o Stallone apostou tudo em si mesmo para viver o Rocky.', t:'real drama emocionante dublado',
         s:{ 23:'15:10 18:00 21:00', 24:'15:10 18:00 21:00', 25:'15:10 18:00 21:00' } },
-      { n:'Os Farofeiros 3', d:'Comédia nacional · 12 anos · só sessão das 22:20', t:'comedia nacional leve franquia familia praia',
+      { n:'Os Farofeiros 3', img:'filmes/farofeiros', d:'Comédia nacional · 1h42 · 12 anos · só às 22:20', sin:'A turma vai pra uma ilha paradisíaca no casamento da filha do Rocha.', t:'comedia nacional leve franquia familia praia',
         s:{ 23:'22:20', 24:'22:20', 25:'22:20' } },
-      { n:'Entrando Numa Grande Fria (novo)', d:'Comédia com o sogro implicante · dublado · estreia 26/11', t:'comedia leve franquia dublado familia',
+      { n:'Entrando Numa Grande Fria (novo)', img:'filmes/grande-fria', d:'Comédia · 1h46 · 12 anos · estreia 26/11', sin:'Agora quem fica noivo é o filho do Greg, e o sogro implicante volta com tudo.', t:'comedia leve franquia dublado familia',
         s:{ 23:'', 24:'', 25:'19:30(pré-estreia)' } },
-      { n:'Godzilla Minus Zero', d:'Ficção científica japonesa · 16 anos · dublado', t:'ficcao monstro acao franquia dublado pesado tenso',
+      { n:'Godzilla Minus Zero', img:'filmes/godzilla', d:'Ficção científica · 2h15 · 16 anos · dublado', sin:'Continuação de Godzilla Minus One, dois anos depois. O monstro volta.', t:'ficcao monstro acao franquia dublado pesado tenso',
         s:{ 23:'16:30', 24:'16:30', 25:'16:30' } },
-      { n:'Ebenezer e os Fantasmas do Natal', d:'Clássico de Natal · 12 anos · dublado', t:'natal fantasia emocionante dublado aventura',
+      { n:'Ebenezer e os Fantasmas do Natal', img:'filmes/ebenezer', d:'Fantasia de Natal · 1h56 · 12 anos · dublado', sin:'Johnny Depp como Scrooge, visitado pelos fantasmas na véspera de Natal.', t:'natal fantasia emocionante dublado aventura',
         s:{ 23:'16:00 18:40', 24:'16:00 18:40', 25:'16:50' } },
     ], qs:[
       ['Quer dar muita risada?', 'comedia'],
@@ -266,15 +286,17 @@ const MODS = [
   { key:'comida', label:'Comida', emoji:'🍿', missao:'O Grande Banquete', conquista:['🍗','Mestra do Banquete'], titulo:'O que você quer comer?',
     intro:'Pipoca na sala ou algo da praça de alimentação? Vamos ver o que sua barriga diz.',
     maxQ:7, cands:[
-      { n:'Pipoca salgada e refri', d:'O clássico, dentro da sala', t:'cinema salgado rapido classico' },
-      { n:'Pipoca doce + chocolate', d:'Combo docinho pra sala', t:'cinema doce rapido' },
-      { n:'Hambúrguer', d:'Praça de alimentação', t:'refeicao fastfood queijo salgado rapido' },
-      { n:'Frango frito', d:'Praça de alimentação', t:'refeicao fastfood salgado rapido crocante' },
-      { n:'Pizza', d:'Praça de alimentação', t:'refeicao queijo salgado sentado compartilhar' },
-      { n:'Prato feito, comida caseira', d:'Praça de alimentação', t:'refeicao caseira sentado salgado' },
-      { n:'Massa / macarrão', d:'Praça de alimentação', t:'refeicao queijo sentado massa' },
-      { n:'Açaí ou sorvete', d:'Sobremesa geladinha', t:'doce gelado leve rapido' },
-      { n:'Café com salgado ou docinho', d:'Cafeteria', t:'leve rapido doce salgado cafe' },
+      { n:'Pipoca salgada e refri', img:'comida/pipoca', d:'O clássico, dentro da sala', t:'cinema salgado rapido classico' },
+      { n:'Pipoca doce + chocolate', img:'comida/pipoca-doce', d:'Combo docinho pra sala', t:'cinema doce rapido' },
+      { n:'Hambúrguer', img:'comida/hamburguer', d:'Praça de alimentação', t:'refeicao fastfood queijo salgado rapido' },
+      { n:'Frango frito', img:'comida/frango', d:'Praça de alimentação', t:'refeicao fastfood salgado rapido crocante' },
+      { n:'Pizza', img:'comida/pizza', d:'Praça de alimentação', t:'refeicao queijo salgado sentado compartilhar' },
+      { n:'Prato feito, comida caseira', img:'comida/prato-feito', d:'Praça de alimentação', t:'refeicao caseira sentado salgado' },
+      { n:'Massa / macarrão', img:'comida/massa', d:'Praça de alimentação', t:'refeicao queijo sentado massa' },
+      { n:'Comida japonesa', img:'comida/sushi', d:'Sushi, temaki, hot roll', t:'refeicao japonesa sentado salgado compartilhar' },
+      { n:'Açaí ou sorvete', img:'comida/acai', d:'Sobremesa geladinha', t:'doce gelado leve rapido' },
+      { n:'Crepe', img:'comida/crepe', d:'Doce ou salgado, quentinho', t:'doce salgado leve sentado crepe' },
+      { n:'Café com salgado ou docinho', img:'comida/cafe', d:'Cafeteria', t:'leve rapido doce salgado cafe' },
     ], qs:[
       ['Quer comer dentro da sala, durante o filme?', 'cinema'],
       ['Tá com vontade de doce?', 'doce'],
@@ -289,6 +311,8 @@ const MODS = [
       ['Dividir algo grande comigo?', 'compartilhar'],
       ['Um macarrão bem servido?', 'massa'],
       ['Um cafezinho?', 'cafe'],
+      ['Topa comida japonesa?', 'japonesa'],
+      ['Um crepe quentinho?', 'crepe'],
       ['O clássico do cinema não pode faltar?', 'classico'],
       ['Quer algo rápido pra não perder o filme?', 'rapido'],
       ['Salgado em vez de doce?', 'salgado'],
@@ -296,26 +320,26 @@ const MODS = [
   { key:'presente', label:'Presente', emoji:'🎁', missao:'O Baú do Tesouro', conquista:['💎','Caçadora de Tesouros'], titulo:'Que presente de aniversário você quer?',
     intro:'Sem perguntar direto, seu escudeiro vai chegar lá. Seja sincera!',
     maxQ:10, dica:true, cands:[
-      { n:'Perfume', c:'Beleza', t:'usar cheiro beleza luxo' },
-      { n:'Kit de skincare', c:'Beleza', t:'beleza cuidado pele calmo' },
-      { n:'Maquiagem', c:'Beleza', t:'beleza pele cor' },
-      { n:'Roupa ou vestido', c:'Moda', t:'moda usar cor' },
-      { n:'Sapato ou tênis', c:'Moda', t:'moda usar pes' },
-      { n:'Bolsa', c:'Moda', t:'moda usar luxo pratico' },
-      { n:'Joia ou semijoia', c:'Acessórios', t:'usar luxo brilho' },
-      { n:'Relógio ou smartwatch', c:'Acessórios', t:'usar pratico tech esporte' },
-      { n:'Celular, fone ou eletrônico', c:'Tecnologia', t:'tech pratico musica' },
-      { n:'Livro ou Kindle', c:'Cultura', t:'cultura calmo' },
-      { n:'Dia de spa e massagem', c:'Experiência', t:'experiencia cuidado calmo' },
-      { n:'Viagem ou fim de semana fora', c:'Experiência', t:'experiencia aventura luxo' },
-      { n:'Jantar especial', c:'Experiência', t:'experiencia comida' },
-      { n:'Ingresso de show', c:'Experiência', t:'experiencia musica agito' },
-      { n:'Decoração pra casa', c:'Casa', t:'casa cor' },
-      { n:'Eletro de cozinha (air fryer etc.)', c:'Casa', t:'casa pratico comida tech' },
-      { n:'Flores ou plantas', c:'Casa', t:'casa cor natureza' },
-      { n:'Curso ou kit de hobby', c:'Hobby', t:'hobby cultura' },
-      { n:'Roupa ou acessório de academia', c:'Esporte', t:'esporte usar' },
-      { n:'Cesta de chocolates', c:'Doces', t:'comida doce' },
+      { n:'Perfume', img:'presente/perfume', c:'Beleza', t:'usar cheiro beleza luxo' },
+      { n:'Kit de skincare', img:'presente/skincare', c:'Beleza', t:'beleza cuidado pele calmo' },
+      { n:'Maquiagem', img:'presente/maquiagem', c:'Beleza', t:'beleza pele cor' },
+      { n:'Roupa ou vestido', img:'presente/vestido', c:'Moda', t:'moda usar cor' },
+      { n:'Sapato ou tênis', img:'presente/tenis', c:'Moda', t:'moda usar pes' },
+      { n:'Bolsa', img:'presente/bolsa', c:'Moda', t:'moda usar luxo pratico' },
+      { n:'Joia ou semijoia', img:'presente/joia', c:'Acessórios', t:'usar luxo brilho' },
+      { n:'Relógio ou smartwatch', img:'presente/relogio', c:'Acessórios', t:'usar pratico tech esporte' },
+      { n:'Celular, fone ou eletrônico', img:'presente/eletronico', c:'Tecnologia', t:'tech pratico musica' },
+      { n:'Livro ou Kindle', img:'presente/livro', c:'Cultura', t:'cultura calmo' },
+      { n:'Dia de spa e massagem', img:'presente/spa', c:'Experiência', t:'experiencia cuidado calmo' },
+      { n:'Viagem ou fim de semana fora', img:'presente/viagem', c:'Experiência', t:'experiencia aventura luxo' },
+      { n:'Jantar especial', img:'presente/jantar', c:'Experiência', t:'experiencia comida' },
+      { n:'Ingresso de show', img:'presente/show', c:'Experiência', t:'experiencia musica agito' },
+      { n:'Decoração pra casa', img:'presente/decoracao', c:'Casa', t:'casa cor' },
+      { n:'Eletro de cozinha (air fryer etc.)', img:'presente/airfryer', c:'Casa', t:'casa pratico comida tech' },
+      { n:'Flores ou plantas', img:'presente/flores', c:'Casa', t:'casa cor natureza' },
+      { n:'Curso ou kit de hobby', img:'presente/hobby', c:'Hobby', t:'hobby cultura' },
+      { n:'Roupa ou acessório de academia', img:'presente/academia', c:'Esporte', t:'esporte usar' },
+      { n:'Cesta de chocolates', img:'presente/chocolate', c:'Doces', t:'comida doce' },
     ], qs:[
       ['Algo que você usaria no corpo, pra vestir ou se enfeitar?', 'usar'],
       ['Tem a ver com beleza ou autocuidado?', 'beleza'],
@@ -383,6 +407,7 @@ MODS.forEach(m => m.cands.forEach(c => c.tags = new Set(c.t.split(' '))));
 const PREVISTO = 26;
 MODS[0].cands.forEach(c => { for (const d of [26, 27, 28]) c.s[d] ??= c.s[25].replace('(pré-estreia)', ''); });
 
+const temFoto = m => m.cands.some(c => c.img);
 const ANS = [['Sim',1],['Provavelmente',.75],['Não sei',.5],['Acho que não',.25],['Não',0]];
 const MIN_Q = 3, SURE = .6, MAX_WRONG = 3;
 
@@ -482,6 +507,9 @@ function view(html, think, topo, brilho) {
     : `<div class="crest"><img src="img/${mi >= 0 && mi < MODS.length ? MODS[mi].key : 'escudo'}.webp" alt=""></div>`);
   app.innerHTML = `<div class="card">${crest}${html}</div>`; hud(brilho); app.querySelector('button, .btn')?.focus();
 }
+const ehPoster = m => m.key === 'filme' ? ' poster' : '';
+const cartao = (m, c) => `<button class="opcao${ehPoster(m)}" data-v="${m.cands.indexOf(c)}"><img src="img/${c.img}.webp" alt="" loading="lazy">
+  <b>${esc(c.n)}</b><small>${esc(c.d || c.c || '')}</small>${c.sin ? `<small class="sin">${esc(c.sin)}</small>` : ''}</button>`;
 function on(sel, fn) { app.querySelectorAll(sel).forEach(b => b.onclick = () => fn(b.dataset.v)); }
 const foto = () => ({ w:[...st.w], asked:[...st.asked], wrong:st.wrong, n:st.n, xp });
 const botaoVoltar = () => hist.length ? '<button class="ghost" data-voltar="1">↶ Voltar uma resposta</button>' : '';
@@ -524,8 +552,11 @@ function nextMod() {
   const hoje = new Date(), diaHoje = hoje.getFullYear() === 2026 && hoje.getMonth() === 10 ? hoje.getDate() : 0;
   if (m.key === 'dia') m.cands.forEach((c, i) => { if (c.dt < diaHoje || result.filme?.s?.[c.dt] === '') st.w[i] = 0; });
   salvar();
-  view(`<p class="kicker">Missão ${mi + 1} de ${MODS.length}</p><h2 class="title">${m.missao}</h2><p><b>${m.titulo}</b><br>${m.intro}</p><button class="primary">Aceitar missão</button>`);
-  on('button', () => step());
+  const galeria = temFoto(m) ? `<p class="ou">Essas são as opções. Se já souber, toque e escolha direto:</p><div class="opcoes">${m.cands.map(c => cartao(m, c)).join('')}</div>` : '';
+  view(`<p class="kicker">Missão ${mi + 1} de ${MODS.length}</p><h2 class="title">${m.missao}</h2><p><b>${m.titulo}</b><br>${m.intro}</p>
+    <button class="primary">Aceitar missão${galeria ? ' e deixar ele adivinhar' : ''}</button>${galeria}`);
+  on('.primary', () => step());
+  on('.opcoes button', v => done(m.cands[+v]));
 }
 function step(gain) {
   const m = MODS[mi];
@@ -534,6 +565,7 @@ function step(gain) {
   curQ = nextQ(m, st);
   view(`<p class="kicker">${m.label} · pergunta ${st.n + 1}</p>${gain ? '<div class="xp">+10 XP</div>' : ''}<h2>${m.qs[curQ][0]}</h2>
     <div class="answers">${ANS.map(([t, v], k) => `<button class="g${k}" data-v="${v}">${t}</button>`).join('')}</div>
+    ${temFoto(m) && st.n ? `<div class="pista">${ELE} está pensando em ${ranked(m, st).slice(0, 3).map(x => `<img src="img/${m.cands[x.i].img}.webp" alt="" title="${esc(m.cands[x.i].n)}">`).join('')}</div>` : ''}
     <button class="ghost" data-skip="1">Deixa que eu escolho da lista</button>${botaoVoltar()}`, false, null, gain);
   app.querySelectorAll('.answers button').forEach(b => b.onclick = () => { hist.push(foto()); answer(m, st, curQ, +b.dataset.v); xp += 10; salvar(); step(true); });
   app.querySelector('[data-skip]').onclick = pickList;
@@ -541,7 +573,7 @@ function step(gain) {
 }
 function guess() {
   const m = MODS[mi], c = m.cands[ranked(m, st)[0].i];
-  view(`<p class="kicker">${ELE}, seu escudeiro, deduziu...</p><p>Aposto que é</p><div class="big">${esc(c.n)}</div><div class="sub">${esc(c.d || c.c || '')}</div>
+  view(`<p class="kicker">${ELE}, seu escudeiro, deduziu...</p><p>Aposto que é</p>${c.img ? `<img class="foto${ehPoster(m)}" src="img/${c.img}.webp" alt="">` : ''}<div class="big">${esc(c.n)}</div><div class="sub">${esc(c.d || c.c || '')}${c.sin ? `<br><i>${esc(c.sin)}</i>` : ''}</div>
     <div class="answers row"><button class="primary" data-v="1">Acertou!</button><button data-v="0">Não é isso</button></div>${botaoVoltar()}`, true);
   on('.answers button', v => v === '1' ? done(c, st.wrong === 0) : (hist.push(foto()), reject(st, m.cands.indexOf(c)), salvar(), step()));
   ligarVoltar();
@@ -550,9 +582,10 @@ function pickList() {
   const m = MODS[mi], r = ranked(m, st);
   const list = r.length ? r.map(x => m.cands[x.i]) : m.cands;
   view(`<p class="kicker">Escolha seu caminho</p><h2>Qual destes?</h2>
-    <div class="answers pick">${list.map(c => `<button data-v="${m.cands.indexOf(c)}">${esc(c.n)}<small>${esc(c.d || c.c || '')}</small></button>`).join('')}</div>
+    ${temFoto(m) ? `<div class="opcoes">${list.map(c => cartao(m, c)).join('')}</div>`
+      : `<div class="answers pick">${list.map(c => `<button data-v="${m.cands.indexOf(c)}">${esc(c.n)}<small>${esc(c.d || c.c || '')}</small></button>`).join('')}</div>`}
     <p class="note">Nenhum? Escreva aqui:</p><textarea id="outro" aria-label="Outra resposta"></textarea><button class="primary" id="ok">Enviar</button>`);
-  on('.pick button', v => done(m.cands[+v]));
+  on('.pick button, .opcoes button', v => done(m.cands[+v]));
   app.querySelector('#ok').onclick = () => { const v = app.querySelector('#outro').value.trim(); if (v) done({ n:v }); };
 }
 function done(c, critico) {
@@ -560,7 +593,7 @@ function done(c, critico) {
   result[m.key] = { ...c, perguntas:st.n, critico };
   if (m.key === 'dia') return sessao(c);
   if (!m.dica) return celebrate();
-  view(`<p class="kicker">Tesouro encontrado!</p><div class="big">${esc(c.n)}</div><div class="sub">Categoria: ${esc(c.c || '—')}</div>
+  view(`<p class="kicker">Tesouro encontrado!</p>${c.img ? `<img class="foto" src="img/${c.img}.webp" alt="">` : ''}<div class="big">${esc(c.n)}</div><div class="sub">Categoria: ${esc(c.c || '—')}</div>
     <p>Quer deixar uma pista extra pro ${ELE}? Cor, tamanho, marca, loja, modelo... (opcional)</p>
     <textarea id="dica" aria-label="Dica do presente" maxlength="300"></textarea><button class="primary" id="ok">Continuar</button>`);
   app.querySelector('#ok').onclick = () => { result[m.key].dica = app.querySelector('#dica').value.trim(); celebrate(); };
@@ -601,10 +634,10 @@ function finish(agora) {
       <h2 class="title">Carta da Aventureira</h2>
       <p class="abre">Eu, <b>${ELA}</b>, aventureira de nível ${lvl()}, declaro a todo o reino que desejo:</p>
       <ul class="inv">
-        ${slot('filme', 'Filme', r.filme.n, '<i>Cinemark Taguatinga Shopping · comprar até 28/11</i>')}
+        ${slot(r.filme.img || 'filme', 'Filme', r.filme.n, '<i>Cinemark Taguatinga Shopping · comprar até 28/11</i>')}
         ${slot('dia', 'Dia', r.dia.n, r.dia.sessao ? `<i>Sessão: ${esc(r.dia.sessao)}</i>` : '')}
-        ${slot('comida', 'Banquete', r.comida.n)}
-        ${slot('presente', 'Tesouro', p.n, (p.c ? `<i>Categoria: ${esc(p.c)}</i>` : '') + (p.dica ? `<i>Pista: ${esc(p.dica)}</i>` : ''))}
+        ${slot(r.comida.img || 'comida', 'Banquete', r.comida.n)}
+        ${slot(p.img || 'presente', 'Tesouro', p.n, (p.c ? `<i>Categoria: ${esc(p.c)}</i>` : '') + (p.dica ? `<i>Pista: ${esc(p.dica)}</i>` : ''))}
         ${slot('festa', 'Celebração', r.festa.n)}
       </ul>
       <p class="assina">Selada e entregue ao meu fiel escudeiro, <b>${ELE}</b>.</p>
