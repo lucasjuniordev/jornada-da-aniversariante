@@ -332,12 +332,12 @@ const MODS = [
     maxQ:7, cands:[
       { n:'Jantar romântico, só nós dois', t:'dois sair calmo comida noite' },
       { n:'Passeio ou viagem, só nós dois', t:'dois sair aventura' },
-      { n:'Bar ou restaurante com a galera', t:'galera sair agito comida noite' },
+      { n:'Restaurante com a galera', t:'galera sair comida noite' },
       { n:'Festinha em casa com os amigos', t:'galera casa agito comida' },
       { n:'Festa surpresa', t:'galera surpresa agito' },
       { n:'Encontro com a família', t:'familia comida calmo' },
       { n:'Dia tranquilo em casa, só nós dois', t:'dois casa calmo' },
-      { n:'Karaokê ou balada com a galera', t:'galera agito sair noite musica' },
+      { n:'Noite de jogos e karaokê em casa com a galera', t:'galera agito casa noite musica' },
     ], qs:[
       ['Quer comemorar com bastante gente?', 'galera'],
       ['Quer algo só nosso, de casal?', 'dois'],
@@ -424,22 +424,10 @@ function enviar() {
     body: JSON.stringify({ jogada, nivel:lvl(), xp, completa: fase === 'final', respostas }) }).then(r => r.ok).catch(() => false);
 }
 
-// ---- sons (sintetizados, sem arquivo) e confete ----
-let mudo = (() => { try { return localStorage.getItem('jornada-mudo') === '1'; } catch { return false; } })(), ac;
-function som(notas) {
-  if (mudo) return;
-  try { ac ??= new AudioContext(); } catch { return; }
-  const t0 = ac.currentTime;
-  notas.forEach(([f, t, d]) => {
-    const o = ac.createOscillator(), g = ac.createGain();
-    o.type = 'square'; o.frequency.value = f;
-    g.gain.setValueAtTime(.05, t0 + t); g.gain.exponentialRampToValueAtTime(.0001, t0 + t + d);
-    o.connect(g).connect(ac.destination); o.start(t0 + t); o.stop(t0 + t + d);
-  });
-}
-const MOEDA = [[988, 0, .08], [1319, .07, .22]], ERRO = [[330, 0, .12], [247, .1, .25]];
-const CONQUISTA = [[523, 0, .12], [659, .1, .12], [784, .2, .12], [1047, .3, .35]];
-const NIVEL = [[784, 0, .1], [988, .08, .1], [1175, .16, .1], [1568, .24, .45]];
+// ---- fanfarra (conquistas e final) e confete ----
+let mudo = (() => { try { return localStorage.getItem('jornada-mudo') === '1'; } catch { return false; } })();
+const FANFARRA = new Audio('sons/fanfarra.mp3'); FANFARRA.preload = 'auto'; FANFARRA.volume = .6;
+function fanfarra() { if (mudo) return; FANFARRA.currentTime = 0; FANFARRA.play().catch(() => {}); }
 function confete() {
   if (reduz) return;
   const c = document.createElement('canvas'); c.className = 'confete'; c.width = innerWidth; c.height = innerHeight; document.body.append(c);
@@ -522,7 +510,7 @@ function step(gain) {
   view(`<p class="kicker">${m.label} · pergunta ${st.n + 1}</p>${gain ? '<div class="xp">+10 XP</div>' : ''}<h2>${m.qs[curQ][0]}</h2>
     <div class="answers">${ANS.map(([t, v], k) => `<button class="g${k}" data-v="${v}">${t}</button>`).join('')}</div>
     <button class="ghost" data-skip="1">Deixa que eu escolho da lista</button>${botaoVoltar()}`, false, null, gain);
-  app.querySelectorAll('.answers button').forEach(b => b.onclick = () => { hist.push(foto()); answer(m, st, curQ, +b.dataset.v); xp += 10; som(MOEDA); salvar(); step(true); });
+  app.querySelectorAll('.answers button').forEach(b => b.onclick = () => { hist.push(foto()); answer(m, st, curQ, +b.dataset.v); xp += 10; salvar(); step(true); });
   app.querySelector('[data-skip]').onclick = pickList;
   ligarVoltar();
 }
@@ -530,7 +518,7 @@ function guess() {
   const m = MODS[mi], c = m.cands[ranked(m, st)[0].i];
   view(`<p class="kicker">${ELE}, seu escudeiro, deduziu...</p><p>Aposto que é</p><div class="big">${esc(c.n)}</div><div class="sub">${esc(c.d || c.c || '')}</div>
     <div class="answers row"><button class="primary" data-v="1">Acertou!</button><button data-v="0">Não é isso</button></div>${botaoVoltar()}`, true);
-  on('.answers button', v => v === '1' ? done(c, st.wrong === 0) : (hist.push(foto()), reject(st, m.cands.indexOf(c)), som(ERRO), salvar(), step()));
+  on('.answers button', v => v === '1' ? done(c, st.wrong === 0) : (hist.push(foto()), reject(st, m.cands.indexOf(c)), salvar(), step()));
   ligarVoltar();
 }
 function pickList() {
@@ -567,7 +555,7 @@ function celebrate() {
   const m = MODS[mi], r = result[m.key], antes = lvl();
   const ganho = 50 + (r.critico ? 30 : 0);
   xp += ganho; fase = 'conquista'; salvar(); enviar();
-  som(lvl() > antes ? NIVEL : CONQUISTA); confete();
+  fanfarra(); confete();
   view(`<p class="kicker">Conquista desbloqueada</p><div class="reward"><img src="img/${m.key}.webp" alt=""></div><h2 class="title">${m.conquista[1]}</h2>
     <div class="xp">+${ganho} XP${r.critico ? ' · acerto crítico!' : ''}</div>${lvl() > antes ? `<div class="xp">⬆ Subiu para o nível ${lvl()}!</div>` : ''}
     <p class="sub">${m.label}: <b>${esc(r.n)}</b></p><button class="primary">${mi + 1 < MODS.length ? 'Próxima missão' : 'Abrir o baú final'}</button>`, false, null, true);
@@ -605,7 +593,7 @@ function finish(agora) {
       <button class="ghost" id="again">Jogar de novo</button>
     </div><p class="note" id="msg"></p>`, false, DUO, agora);
   if (agora) {
-    som(NIVEL); confete();
+    fanfarra(); confete();
     enviar().then(ok => { const e = document.getElementById('envio'); if (e) e.textContent = ok ? `✓ O mensageiro entregou sua carta ao ${ELE}.` : `O mensageiro se perdeu no caminho. Manda pelo WhatsApp aqui embaixo 👇`; });
   }
   app.querySelector('#copy').onclick = async () => {

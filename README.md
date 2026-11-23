@@ -11,6 +11,8 @@ No ar em https://jornada.lucasjrdev.com · diário do escudeiro em https://jorna
 - `src/index.js`: Worker com `POST /api/respostas` (salva o que já foi descoberto, por jogada) e `GET /api/respostas` (lista; exige `Authorization: Bearer <chave>`). O resto é servido direto dos assets.
 - KV `RESPOSTAS` guarda as jogadas; a chave é o secret `ESCUDEIRO_CHAVE` (`npx wrangler secret put ESCUDEIRO_CHAVE`), nunca no repositório.
 
+Som: `public/sons/fanfarra.mp3` ("Success Fanfare Trumpets", freesound_community no Pixabay), tocado só nas conquistas e no final.
+
 ## Rodar localmente
 
 - `npx wrangler dev` com um `.dev.vars` (ignorado pelo Git) contendo `ESCUDEIRO_CHAVE=teste-local`. O KV é simulado localmente.
