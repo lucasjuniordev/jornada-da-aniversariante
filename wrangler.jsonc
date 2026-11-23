@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developers.cloudflare.com/workers/wrangler/config-schema.json",
+  "name": "jornada-da-aniversariante",
+  "compatibility_date": "2026-11-23",
+  "workers_dev": false,
+  "preview_urls": true,
+  "routes": [
+    { "pattern": "jornada.lucasjrdev.com", "custom_domain": true }
+  ],
+  "assets": { "directory": "./public" },
+  "previews": {}
+}
