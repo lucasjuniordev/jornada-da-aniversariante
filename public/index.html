@@ -21,7 +21,8 @@
   body { margin:0; min-height:100vh; min-height:100dvh; font:500 18px/1.5 'Alegreya Sans', system-ui, sans-serif; color:var(--ink);
     display:flex; justify-content:center; padding:16px 20px 40px; }
   body::before { content:''; position:fixed; inset:0; z-index:-1;
-    background:linear-gradient(180deg, #0b0f24cc 0%, #0b0f2455 35%, #0b0f24aa 100%), url(img/cenario.webp) 62% center / cover no-repeat, var(--night); }
+    background:linear-gradient(180deg, #0b0f24cc 0%, #0b0f2455 35%, #0b0f24aa 100%); }
+  .bg { position:fixed; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:62% center; background:var(--night) url(img/cenario.webp) 62% center / cover; }
   main { width:100%; max-width:540px; }
 
   /* HUD: retrato, nível e XP */
@@ -29,7 +30,7 @@
     background:linear-gradient(180deg, #5a3820, var(--wood2)); border:2px solid var(--gold3); box-shadow:inset 0 1px 0 #ffffff26, 0 8px 20px #0009; color:var(--parch); }
   .portrait { width:56px; height:56px; border-radius:50%; display:grid; place-items:center; background:radial-gradient(circle at 50% 35%, #33407e, #121833);
     border:3px solid var(--gold); box-shadow:0 0 0 2px var(--wood2); }
-  .portrait img { width:44px; height:44px; }
+  .portrait img { width:100%; height:100%; border-radius:50%; object-fit:cover; }
   .who .row { display:flex; align-items:baseline; gap:8px; margin-bottom:5px; }
   .who b { font:800 18px Alegreya, Georgia, serif; color:var(--gold2); }
   .lv { font-weight:800; font-size:13px; color:#2a1a06; background:linear-gradient(#ffe79a, var(--gold)); border-radius:999px; padding:1px 9px; }
@@ -66,6 +67,10 @@
     background:radial-gradient(circle at 50% 35%, #34418a, #121833); border:4px solid var(--gold); box-shadow:0 0 0 5px var(--wood), 0 10px 24px #000a;
     animation:float 3s ease-in-out infinite; }
   .crest img { width:84px; height:84px; filter:drop-shadow(0 4px 4px #0008); }
+  .crest img.face { width:100%; height:100%; border-radius:50%; object-fit:cover; filter:none; }
+  .crest.duo { width:190px; margin-left:-95px; background:none; border:0; box-shadow:none; display:flex; justify-content:center; }
+  .crest.duo img { width:104px; height:104px; border-radius:50%; object-fit:cover; border:4px solid var(--gold); box-shadow:0 0 0 4px var(--wood), 0 10px 20px #000a; filter:none; }
+  .crest.duo img + img { margin-left:-22px; }
   .crest.think { animation:float 3s ease-in-out infinite, glow .7s ease-in-out infinite alternate; }
   @keyframes float { 50% { transform:translateY(-6px); } }
 
@@ -149,6 +154,7 @@
 </style>
 </head>
 <body>
+<video class="bg" id="bg" src="img/cenario.mp4" poster="img/cenario.webp" muted loop playsinline autoplay preload="auto" aria-hidden="true"></video>
 <main>
   <div id="hud" aria-label="Progresso"></div>
   <div id="app" aria-live="polite"></div>
@@ -371,18 +377,22 @@ const lvl = () => 1 + Math.floor(xp / 100);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[ch]));
 
 function hud() {
-  hudEl.innerHTML = `<div class="hud"><div class="portrait"><img src="img/escudo.webp" alt=""></div><div class="who">
+  hudEl.innerHTML = `<div class="hud"><div class="portrait"><img src="img/aventureira.webp" alt="Retrato da aventureira"></div><div class="who">
       <div class="row"><b>Aventureira</b><span class="lv">Nível ${lvl()}</span><span class="xpn">${xp} XP</span></div>
       <div class="bar" role="progressbar" aria-label="Experiência até o próximo nível" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${xp % 100}"><i style="width:${xp % 100}%"></i></div></div></div>
     <ol class="map" aria-label="Missões">${MODS.map((m, i) => `<li class="${i < mi ? 'done' : i === mi ? 'on' : 'locked'}"><span><img src="img/${m.key}.webp" alt=""></span><small>${m.label === 'Comemoração' ? 'Festa' : m.label}</small></li>`).join('')}</ol>`;
 }
-function view(html, think) { app.innerHTML = `<div class="card"><div class="crest${think ? ' think' : ''}"><img src="img/${mi >= 0 && mi < MODS.length ? MODS[mi].key : 'escudo'}.webp" alt=""></div>${html}</div>`; hud(); app.querySelector('button, .btn')?.focus(); }
+const DUO = '<div class="crest duo"><img src="img/aventureira.webp" alt="A aventureira"><img src="img/escudeiro.webp" alt="O escudeiro"></div>';
+function view(html, think, topo) {
+  const crest = topo || (think ? '<div class="crest think"><img class="face" src="img/escudeiro.webp" alt="O escudeiro pensando"></div>'
+    : `<div class="crest"><img src="img/${mi >= 0 && mi < MODS.length ? MODS[mi].key : 'escudo'}.webp" alt=""></div>`);
+  app.innerHTML = `<div class="card">${crest}${html}</div>`; hud(); app.querySelector('button, .btn')?.focus(); }
 function on(sel, fn) { app.querySelectorAll(sel).forEach(b => b.onclick = () => fn(b.dataset.v)); }
 
 function start() {
   view(`<p class="kicker">Nova aventura</p><h1>A Jornada da Aniversariante</h1>
-    <p>Bem-vinda, aventureira! Seu fiel escudeiro preparou 5 missões: o filme, o dia, o banquete, o tesouro do seu aniversário e a grande celebração. Responda com sinceridade, ganhe XP e suba de nível. A cada resposta, seu escudeiro chega mais perto do que você quer.</p>
-    <button class="primary">Iniciar jornada</button>`);
+    <p>Bem-vinda, aventureira! Seu fiel escudeiro (esse aí do lado) preparou 5 missões: o filme, o dia, o banquete, o tesouro do seu aniversário e a grande celebração. Responda com sinceridade, ganhe XP e suba de nível. A cada resposta, seu escudeiro chega mais perto do que você quer.</p>
+    <button class="primary">Iniciar jornada</button>`, false, DUO);
   on('button', nextMod);
 }
 function nextMod() {
@@ -476,7 +486,7 @@ function finish() {
       <a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">Enviar pro meu escudeiro no WhatsApp</a>
       <button id="copy">Copiar respostas</button>
       <button class="ghost" id="again">Jogar de novo</button>
-    </div><p class="note" id="msg"></p>`);
+    </div><p class="note" id="msg"></p>`, false, DUO);
   app.querySelector('#copy').onclick = async () => {
     const msg = app.querySelector('#msg');
     try { await navigator.clipboard.writeText(t); msg.textContent = 'Copiado! Agora é só colar pra ele.'; }
@@ -484,6 +494,8 @@ function finish() {
   };
   app.querySelector('#again').onclick = () => { mi = -1; xp = 0; start(); };
 }
+const bg = document.getElementById('bg');
+if (matchMedia('(prefers-reduced-motion: reduce)').matches || navigator.connection?.saveData) { bg.removeAttribute('autoplay'); bg.preload = 'none'; bg.pause(); }
 start();
 </script>
 </body>
