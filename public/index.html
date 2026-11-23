@@ -11,15 +11,15 @@
 <meta name="theme-color" content="#14182e">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Press+Start+2P&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#14182e; --bg2:#22305a; --card:#fbf3dc; --ink:#2b2340; --muted:#6e6478; --rose:#c8406a; --rose2:#f0a3b8; --gold:#f2c14e; --green:#3fae6a; }
+  :root { --bg:#14182e; --bg2:#22305a; --card:#fbf3dc; --ink:#2b2340; --muted:#5a5166; --rose:#c8406a; --rose2:#f0a3b8; --gold:#f2c14e; --green:#3fae6a; }
   * { box-sizing:border-box; }
   body { margin:0; min-height:100vh; font-family:Nunito, system-ui, sans-serif; color:var(--ink);
     background: radial-gradient(circle at 15% 10%, #3b4f8f 0, transparent 40%), radial-gradient(circle at 85% 95%, #5a2a55 0, transparent 40%), linear-gradient(170deg, var(--bg), var(--bg2));
     display:flex; align-items:center; justify-content:center; padding:24px 16px; }
   main { width:100%; max-width:520px; }
-  .hud { display:flex; align-items:center; gap:10px; color:#fff; font:10px 'Press Start 2P', monospace; margin-bottom:10px; }
+  .hud { display:flex; align-items:center; gap:10px; color:#fff; font:900 14px Nunito, sans-serif; letter-spacing:.02em; margin-bottom:10px; }
   .bar { flex:1; height:12px; border:2px solid var(--gold); border-radius:3px; background:#0006; overflow:hidden; }
   .bar i { display:block; height:100%; background:linear-gradient(90deg, var(--gold), #ffe08a); transition:width .5s; }
   .steps { display:flex; gap:8px; justify-content:center; margin-bottom:46px; }
@@ -34,13 +34,13 @@
   .orb.think { animation:float 3s ease-in-out infinite, pulse .5s ease-in-out infinite alternate; }
   @keyframes float { 50% { transform:translateY(-6px); } }
   @keyframes pulse { to { filter:brightness(1.25); } }
-  .kicker { font:9px/1.6 'Press Start 2P', monospace; color:var(--rose); margin:0 0 12px; }
-  h1, h2 { font-family:'Pixelify Sans', system-ui, sans-serif; font-weight:700; line-height:1.15; margin:0 0 12px; }
-  h1, h2, .big { font-variant-ligatures:none; }
-  h1 { font-size:36px; } h2 { font-size:27px; }
-  p { color:var(--muted); line-height:1.5; margin:0 0 18px; }
-  .big { font-family:'Pixelify Sans', system-ui, sans-serif; font-size:28px; color:var(--ink); margin:6px 0 4px; font-weight:700; }
-  .xp { display:inline-block; font:11px 'Press Start 2P', monospace; color:#8a5a00; background:#ffe9a8; border:2px solid var(--gold); border-radius:6px; padding:8px 10px; margin:0 4px 16px; animation:pop .4s ease; }
+  .kicker { font:900 13px/1.4 Nunito, sans-serif; letter-spacing:.08em; text-transform:uppercase; color:var(--rose); margin:0 0 12px; }
+  h1, h2 { font-weight:900; line-height:1.2; margin:0 0 14px; }
+  h1, .title { font-family:Cinzel, Georgia, serif; font-weight:800; letter-spacing:.01em; }
+  h1 { font-size:34px; } h2 { font-size:24px; } h2.title { font-size:27px; }
+  p { color:var(--muted); font-size:17px; line-height:1.55; margin:0 0 18px; }
+  .big { font-family:Cinzel, Georgia, serif; font-size:28px; line-height:1.2; color:var(--ink); margin:6px 0 4px; font-weight:700; }
+  .xp { display:inline-block; font:900 15px Nunito, sans-serif; color:#8a5a00; background:#ffe9a8; border:2px solid var(--gold); border-radius:6px; padding:8px 10px; margin:0 4px 16px; animation:pop .4s ease; }
   .badge { font-size:54px; animation:pop .5s ease; }
   @keyframes pop { from { transform:scale(.3); opacity:0; } 70% { transform:scale(1.15); } }
   .sub { font-size:14px; color:var(--muted); margin-bottom:20px; }
@@ -77,66 +77,60 @@
 // Cada missão: candidatos com etiquetas + perguntas sobre uma etiqueta. O escudeiro escolhe a pergunta que melhor divide os candidatos restantes.
 const MODS = [
   { key:'filme', label:'Filme', emoji:'🎬', missao:'A Sala dos Mil Filmes', conquista:['🏆','Cinéfila Lendária'], titulo:'Qual filme a gente vai ver?',
-    intro:'Programação do Cinemark Taguatinga Shopping. Responda e eu adivinho o filme certo.',
-    maxQ:9, cands:[
-      { n:'Jogos Vorazes: Amanhecer na Colheita', d:'Aventura, ação · 16 anos · dublado', t:'acao aventura tenso franquia dublado pesado emocionante drama' },
-      { n:'Eu Sou o Rocky', d:'Biografia do Stallone · 12 anos · dublado', t:'real drama emocionante dublado' },
-      { n:'Os Farofeiros 3', d:'Comédia nacional · 12 anos', t:'comedia nacional leve franquia familia praia' },
-      { n:'100 Dias', d:'Amyr Klink cruzando o Atlântico a remo · 12 anos', t:'real nacional aventura emocionante drama' },
-      { n:'As Dez Vantagens de Morrer Depois de Você', d:'Comédia dramática nacional · 14 anos', t:'comedia nacional emocionante drama' },
-      { n:'Se Eu Fosse Você 3', d:'Comédia romântica nacional · 10 anos', t:'comedia romance nacional leve franquia' },
-      { n:'Antártida', d:'Suspense nacional, um crime na estação polar · 16 anos', t:'tenso nacional pesado misterio' },
-      { n:'Um Tio Quase Perfeito 3', d:'Comédia nacional · livre p/ maiores de 6', t:'comedia nacional leve franquia familia crianca' },
-      { n:'Como Roubar Um Banco', d:'Ação e assalto · 16 anos · dublado', t:'acao tenso dublado pesado crime' },
-      { n:'Cara-de-Barro', d:'Terror no universo do Batman · 18 anos · dublado', t:'terror tenso dublado pesado monstro franquia' },
-      { n:'Godzilla Minus Zero', d:'Ficção científica japonesa · 16 anos · dublado', t:'ficcao monstro acao franquia dublado pesado tenso' },
-      { n:'Ebenezer e os Fantasmas do Natal', d:'Fantasia natalina · 12 anos · dublado', t:'natal fantasia emocionante dublado aventura' },
+    intro:'Cinemark Taguatinga Shopping. Só entraram filmes com sessão depois das 15h, já que você sai do trabalho às 14h.',
+    maxQ:7, cands:[
+      // s = sessões a partir das 15h, por dia (AdoroCinema, consultado em 23/11). Dia ausente = programação ainda não publicada.
+      { n:'Jogos Vorazes: Amanhecer na Colheita', d:'Aventura, ação · 16 anos · dublado', t:'acao aventura tenso franquia dublado pesado emocionante drama',
+        s:{ 23:'15:00 15:30 16:40 17:00(XD) 17:20 18:10 18:30 19:00 19:30 20:00 20:30(XD) 20:50 21:20 21:40 22:00', 24:'15:00 15:30 16:40 17:00(XD) 17:20 18:10 18:30 19:00 19:30 20:00 20:30(XD) 20:50 21:20 21:40 22:00', 25:'15:30 16:40 17:00(XD) 17:20 17:40 18:10 19:00 19:40 20:00 20:30(XD) 20:50 21:05 21:40 22:00' } },
+      { n:'Eu Sou o Rocky', d:'A história real do Stallone · 12 anos · dublado', t:'real drama emocionante dublado',
+        s:{ 23:'15:10 18:00 21:00', 24:'15:10 18:00 21:00', 25:'15:10 18:00 21:00' } },
+      { n:'Os Farofeiros 3', d:'Comédia nacional · 12 anos · só sessão das 22:20', t:'comedia nacional leve franquia familia praia',
+        s:{ 23:'22:20', 24:'22:20', 25:'22:20' } },
+      { n:'Entrando Numa Grande Fria (novo)', d:'Comédia com o sogro implicante · dublado · estreia 26/11', t:'comedia leve franquia dublado familia',
+        s:{ 23:'', 24:'', 25:'19:30(pré-estreia)' } },
+      { n:'Godzilla Minus Zero', d:'Ficção científica japonesa · 16 anos · dublado', t:'ficcao monstro acao franquia dublado pesado tenso',
+        s:{ 23:'16:30', 24:'16:30', 25:'16:30' } },
+      { n:'Ebenezer e os Fantasmas do Natal', d:'Clássico de Natal · 12 anos · dublado', t:'natal fantasia emocionante dublado aventura',
+        s:{ 23:'16:00 18:40', 24:'16:00 18:40', 25:'16:50' } },
     ], qs:[
       ['Quer dar muita risada?', 'comedia'],
       ['Topa um filme brasileiro?', 'nacional'],
       ['Tá a fim de ação e adrenalina?', 'acao'],
       ['Quer um filme leve, pra sair sorrindo?', 'leve'],
       ['Topa ficar tensa, roendo a unha?', 'tenso'],
-      ['Pode ter terror e cena assustadora?', 'terror'],
       ['Curte história baseada em fatos reais?', 'real'],
       ['Quer se emocionar, talvez chorar um pouquinho?', 'emocionante'],
       ['Já quer entrar no clima de Natal?', 'natal'],
       ['Pode ter monstro gigante destruindo tudo?', 'monstro'],
       ['Gosta de continuação de uma história que você já conhece?', 'franquia'],
-      ['Um romancezinho no meio seria bom?', 'romance'],
-      ['Algo mágico, de fantasia?', 'fantasia'],
       ['Prefere filme dublado?', 'dublado'],
       ['Topa um filme mais pesado, de 16 anos pra cima?', 'pesado'],
       ['Um drama mais sério te agrada?', 'drama'],
       ['Uma aventura grande, de jornada?', 'aventura'],
       ['Clima de praia e férias?', 'praia'],
-      ['Pode ter criança ou bebê fofo na história?', 'crianca'],
-      ['História de crime e assalto?', 'crime'],
-      ['Mistério do tipo "quem foi o culpado"?', 'misterio'],
+      ['Comédia de família, com sogro e parentes?', 'familia'],
       ['Ficção científica te anima?', 'ficcao'],
+      ['Algo com um toque de fantasia?', 'fantasia'],
     ] },
   { key:'dia', label:'Dia', emoji:'📅', missao:'O Calendário do Reino', conquista:['⏳','Guardiã do Tempo'], titulo:'Que dia a gente vai?',
-    intro:'De hoje (23/11) até o dia 30. Me conta como você imagina esse dia.',
+    intro:'Até sábado (28). Como você sai do trabalho às 14h, vai ser sempre de tarde ou à noite.',
     maxQ:6, cands:[
-      { n:'Segunda, 23/11 (hoje!)', t:'semana cedo hoje' },
-      { n:'Terça, 24/11', t:'semana cedo amanha' },
-      { n:'Quarta, 25/11', t:'semana cedo meio' },
-      { n:'Quinta, 26/11', t:'semana meio' },
-      { n:'Sexta, 27/11', t:'semana sexta folga' },
-      { n:'Sábado, 28/11', t:'fds fim folga' },
-      { n:'Domingo, 29/11', t:'fds fim dom' },
-      { n:'Segunda, 30/11', t:'semana fim' },
+      { n:'Segunda, 23/11', dt:23, t:'seg cedo vazio' },
+      { n:'Terça, 24/11', dt:24, t:'ter cedo vazio' },
+      { n:'Quarta, 25/11', dt:25, t:'cedo meio vazio' },
+      { n:'Quinta, 26/11', dt:26, t:'meio vazio estreia' },
+      { n:'Sexta, 27/11', dt:27, t:'fim sexta estreia' },
+      { n:'Sábado, 28/11', dt:28, t:'fim folga estreia' },
     ], qs:[
-      ['Prefere ir no fim de semana?', 'fds'],
+      ['Começar a semana com cinema, numa segunda à noite?', 'seg'],
+      ['Uma terça-feira te agrada?', 'ter'],
       ['Quer ir logo, até quarta-feira?', 'cedo'],
-      ['Uma sexta à noite te anima?', 'sexta'],
-      ['Topa ir hoje mesmo?', 'hoje'],
-      ['E amanhã, que tal?', 'amanha'],
-      ['Gosta de cinema mais vazio, em dia de semana?', 'semana'],
-      ['Prefere deixar pro finalzinho do mês (28 a 30)?', 'fim'],
       ['Meio da semana, quarta ou quinta?', 'meio'],
-      ['Quer poder dormir até tarde no dia seguinte?', 'folga'],
-      ['Um domingo de cinema te agrada?', 'dom'],
+      ['Sexta à noite te anima?', 'sexta'],
+      ['Quer ir num dia em que no dia seguinte você não trabalha?', 'folga'],
+      ['Prefere deixar pro fim da semana?', 'fim'],
+      ['Gosta de cinema mais vazio?', 'vazio'],
+      ['Topa esperar a programação nova, que entra na quinta?', 'estreia'],
     ] },
   { key:'comida', label:'Comida', emoji:'🍿', missao:'O Grande Banquete', conquista:['🍗','Mestra do Banquete'], titulo:'O que você quer comer?',
     intro:'Pipoca na sala ou algo da praça de alimentação? Vamos ver o que sua barriga diz.',
@@ -146,7 +140,6 @@ const MODS = [
       { n:'Hambúrguer', d:'Praça de alimentação', t:'refeicao fastfood queijo salgado rapido' },
       { n:'Frango frito', d:'Praça de alimentação', t:'refeicao fastfood salgado rapido crocante' },
       { n:'Pizza', d:'Praça de alimentação', t:'refeicao queijo salgado sentado compartilhar' },
-      { n:'Comida japonesa', d:'Praça de alimentação', t:'refeicao peixe leve sentado' },
       { n:'Prato feito, comida caseira', d:'Praça de alimentação', t:'refeicao caseira sentado salgado' },
       { n:'Massa / macarrão', d:'Praça de alimentação', t:'refeicao queijo sentado massa' },
       { n:'Açaí ou sorvete', d:'Sobremesa geladinha', t:'doce gelado leve rapido' },
@@ -157,7 +150,6 @@ const MODS = [
       ['Quer uma refeição de verdade, de encher a barriga?', 'refeicao'],
       ['Fast food bateu forte?', 'fastfood'],
       ['Queijo derretido?', 'queijo'],
-      ['Peixe cru te anima?', 'peixe'],
       ['Algo geladinho?', 'gelado'],
       ['Prefere algo mais leve?', 'leve'],
       ['Comidinha caseira, arroz e feijão?', 'caseira'],
@@ -220,14 +212,14 @@ const MODS = [
       ['Agito, multidão, emoção?', 'agito'],
     ] },
   { key:'festa', label:'Comemoração', emoji:'🥳', missao:'A Grande Celebração', conquista:['👑','Rainha da Festa'], titulo:'Como você quer comemorar o niver?',
-    intro:'Com a galera, só nós dois, festinha, surpresa... Vamos descobrir.',
+    intro:'Seu niver é segunda, dia 30 (depois das 14h, quando você sai do trabalho). Com a galera, só nós dois, festinha, surpresa... Vamos descobrir.',
     maxQ:7, cands:[
       { n:'Jantar romântico, só nós dois', t:'dois sair calmo comida noite' },
       { n:'Passeio ou viagem, só nós dois', t:'dois sair aventura' },
       { n:'Bar ou restaurante com a galera', t:'galera sair agito comida noite' },
       { n:'Festinha em casa com os amigos', t:'galera casa agito comida' },
       { n:'Festa surpresa', t:'galera surpresa agito' },
-      { n:'Almoço com a família', t:'familia comida calmo' },
+      { n:'Encontro com a família', t:'familia comida calmo' },
       { n:'Dia tranquilo em casa, só nós dois', t:'dois casa calmo' },
       { n:'Karaokê ou balada com a galera', t:'galera agito sair noite musica' },
     ], qs:[
@@ -313,7 +305,11 @@ function nextMod() {
   if (mi >= MODS.length) return finish();
   st = newState(MODS[mi]);
   const m = MODS[mi];
-  view(`<p class="kicker">Missão ${mi + 1} de ${MODS.length}</p><h2>${m.missao}</h2><p><b>${m.titulo}</b><br>${m.intro}</p><button class="primary">Aceitar missão</button>`);
+  // dia sem sessão (já publicada) do filme escolhido fica fora
+  // dias que já passaram, ou sem sessão (já publicada) do filme escolhido, ficam fora
+  const hoje = new Date(), diaHoje = hoje.getFullYear() === 2026 && hoje.getMonth() === 10 ? hoje.getDate() : 0;
+  if (m.key === 'dia') m.cands.forEach((c, i) => { if (c.dt < diaHoje || result.filme?.s?.[c.dt] === '') st.w[i] = 0; });
+  view(`<p class="kicker">Missão ${mi + 1} de ${MODS.length}</p><h2 class="title">${m.missao}</h2><p><b>${m.titulo}</b><br>${m.intro}</p><button class="primary">Aceitar missão</button>`);
   on('button', () => step());
 }
 function step(gain) {
@@ -345,17 +341,29 @@ function pickList() {
 function done(c, critico) {
   const m = MODS[mi];
   result[m.key] = { ...c, perguntas:st.n, critico };
+  if (m.key === 'dia') return sessao(c);
   if (!m.dica) return celebrate();
   view(`<p class="kicker">Tesouro encontrado!</p><div class="big">${esc(c.n)}</div><div class="sub">Categoria: ${esc(c.c || '—')}</div>
     <p>Quer deixar uma pista extra pro escudeiro? Cor, tamanho, marca, loja, modelo... (opcional)</p>
     <textarea id="dica" aria-label="Dica do presente"></textarea><button class="primary" id="ok">Continuar</button>`);
   app.querySelector('#ok').onclick = () => { result[m.key].dica = app.querySelector('#dica').value.trim(); celebrate(); };
 }
+function sessao(c) {
+  const s = result.filme.s?.[c.dt];
+  if (s) {
+    view(`<p class="kicker">Escolha a hora da batalha</p><h2>Qual sessão de ${esc(result.filme.n)}?</h2><p>${esc(c.n)}</p>
+      <div class="answers">${s.split(' ').map(t => `<button data-v="${t}">${t.replace('(', ' · ').replace(')', '')}</button>`).join('')}<button class="ghost" data-v="">Decido depois</button></div>`);
+    return on('.answers button', v => { result.dia.sessao = v.replace('(', ' ').replace(')', ''); celebrate(); });
+  }
+  view(`<p class="kicker">Anotado!</p><div class="big">${esc(c.n)}</div>
+    <p>Os horários desse dia ainda não saíram (o cinema publica a programação nova no meio da semana). Seu escudeiro confere e te avisa a sessão.</p><button class="primary">Continuar</button>`);
+  on('button', celebrate);
+}
 function celebrate() {
   const m = MODS[mi], r = result[m.key], antes = lvl();
   const ganho = 50 + (r.critico ? 30 : 0);
   xp += ganho;
-  view(`<p class="kicker">Missão cumprida!</p><div class="badge">${m.conquista[0]}</div><h2>Conquista: ${m.conquista[1]}</h2>
+  view(`<p class="kicker">Missão cumprida!</p><div class="badge">${m.conquista[0]}</div><h2 class="title">Conquista: ${m.conquista[1]}</h2>
     <div class="xp">+${ganho} XP${r.critico ? ' · acerto crítico!' : ''}</div>${lvl() > antes ? `<div class="xp">⬆ Subiu para o nível ${lvl()}!</div>` : ''}
     <p class="sub">${m.label}: <b>${esc(r.n)}</b></p><button class="primary">${mi + 1 < MODS.length ? 'Próxima missão' : 'Abrir o baú final'}</button>`);
   on('button', nextMod);
@@ -363,7 +371,7 @@ function celebrate() {
 function texto() {
   const r = result, p = r.presente;
   return [`🛡️ A Jornada da Aniversariante — concluída no nível ${lvl()}! O que eu quero:`,
-    `🎬 Filme: ${r.filme.n}`, `📅 Dia: ${r.dia.n}`, `🍿 Comida: ${r.comida.n}`,
+    `🎬 Filme: ${r.filme.n}`, `📅 Dia: ${r.dia.n}${r.dia.sessao ? ' · sessão ' + r.dia.sessao : ''}`, `🍿 Comida: ${r.comida.n}`,
     `🎁 Presente: ${p.n}${p.c ? ' (' + p.c + ')' : ''}${p.dica ? ' — dica: ' + p.dica : ''}`,
     `🥳 Niver: ${r.festa.n}`].join('\n');
 }
@@ -371,8 +379,8 @@ function finish() {
   const r = result, p = r.presente, t = texto();
   view(`<p class="kicker">Jornada completa · Nível ${lvl()}</p><h2>Seu inventário</h2>
     <div class="summary">
-      <div><b>🎬 Filme</b>${esc(r.filme.n)}<i>Cinemark Taguatinga Shopping</i></div>
-      <div><b>📅 Dia</b>${esc(r.dia.n)}</div>
+      <div><b>🎬 Filme</b>${esc(r.filme.n)}<i>Cinemark Taguatinga Shopping · comprar até 28/11</i></div>
+      <div><b>📅 Dia</b>${esc(r.dia.n)}${r.dia.sessao ? `<i>Sessão: ${esc(r.dia.sessao)}</i>` : ''}</div>
       <div><b>🍿 Banquete</b>${esc(r.comida.n)}</div>
       <div><b>🎁 Tesouro</b>${esc(p.n)}${p.c ? `<i>Categoria: ${esc(p.c)}</i>` : ''}${p.dica ? `<i>Pista: ${esc(p.dica)}</i>` : ''}</div>
       <div><b>🥳 Celebração</b>${esc(r.festa.n)}</div>
