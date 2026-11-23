@@ -75,9 +75,9 @@
   .kicker::after { transform:scaleX(-1); }
   h1, h2 { margin:0 0 14px; color:var(--ink); line-height:1.2; }
   h1, .title { font-family:'Cinzel Decorative', Georgia, serif; font-weight:700; letter-spacing:.01em; text-shadow:0 1px 0 #fff9; }
-  h1 { font-size:31px; }
-  h2 { font:800 25px/1.25 Alegreya, Georgia, serif; }
-  h2.title { font-size:25px; }
+  h1 { font-size:clamp(21px, 7vw, 31px); overflow-wrap:break-word; }
+  h2 { font:800 clamp(21px, 6.2vw, 25px)/1.25 Alegreya, Georgia, serif; overflow-wrap:break-word; }
+  h2.title { font-size:clamp(20px, 6vw, 25px); }
   p { color:var(--ink2); margin:0 0 18px; }
   p small { font-size:15px; }
   .big { font:800 28px/1.2 Alegreya, Georgia, serif; color:var(--ruby2); margin:4px 0 4px; }
@@ -96,12 +96,16 @@
   .answers.row { grid-template-columns:1fr 1fr; }
   .answers.row button { justify-content:center; }
   .answers.row button::before { display:none; }
+  .answers.horas { grid-template-columns:repeat(auto-fill, minmax(84px, 1fr)); }
+  .answers.horas button { justify-content:center; padding:12px 6px; }
+  .answers.horas button::before { display:none; }
+  .answers.horas .ghost { grid-column:1 / -1; }
   .pick small { display:block; font-weight:500; font-size:15px; color:var(--ink2); }
   .primary, .answers .primary { color:#fff4da; text-shadow:0 1px 0 #0007; padding:14px 28px; border-radius:12px; border:2px solid var(--gold);
     background:linear-gradient(180deg, #cf5262, var(--ruby2)); box-shadow:0 4px 0 #4e111b, 0 10px 20px #0004, inset 0 1px 0 #ffffff55; }
   .primary:hover { filter:brightness(1.08); }
   .primary:active { transform:translateY(3px); box-shadow:0 1px 0 #4e111b; }
-  .ghost, .answers .ghost { background:none; border:0; box-shadow:none; color:var(--ink2); font-weight:700; font-size:16px; padding:10px; text-decoration:underline; text-underline-offset:3px; }
+  .ghost, .answers .ghost { min-height:44px; background:none; border:0; box-shadow:none; color:var(--ink2); font-weight:700; font-size:16px; padding:10px; text-decoration:underline; text-underline-offset:3px; }
   .answers .ghost { justify-content:center; }
   .answers .ghost::before { display:none; }
   button:focus-visible, .btn:focus-visible, textarea:focus-visible { outline:3px solid #2c5bd8; outline-offset:3px; }
@@ -139,7 +143,7 @@
   @media (max-width:420px) {
     body { font-size:17px; }
     .map span { width:48px; height:48px; } .map img { width:36px; height:36px; } .map::before { top:23px; } .map li { width:56px; } .map small { font-size:11px; }
-    .card { padding:60px 18px 22px; } h1 { font-size:27px; } h2 { font-size:23px; }
+    .card { padding:60px 16px 22px; }
   }
   @media (prefers-reduced-motion:reduce) { *, *::before { animation:none !important; transition:none !important; } }
 </style>
@@ -433,7 +437,7 @@ function sessao(c) {
   const s = result.filme.s?.[c.dt];
   if (s) {
     view(`<p class="kicker">Escolha a hora da batalha</p><h2>Qual sessão de ${esc(result.filme.n)}?</h2><p>${esc(c.n)}${c.dt >= PREVISTO ? '<br><small>Horários previstos, iguais aos desta semana. Seu escudeiro confirma na compra.</small>' : ''}</p>
-      <div class="answers">${s.split(' ').map(t => `<button data-v="${t}">${t.replace('(', ' · ').replace(')', '')}</button>`).join('')}<button class="ghost" data-v="">Decido depois</button></div>`);
+      <div class="answers horas">${s.split(' ').map(t => `<button data-v="${t}">${t.replace('(', ' · ').replace(')', '')}</button>`).join('')}<button class="ghost" data-v="">Decido depois</button></div>`);
     return on('.answers button', v => { result.dia.sessao = v.replace('(', ' ').replace(')', '') + (v && c.dt >= PREVISTO ? ' (previsto)' : ''); celebrate(); });
   }
   view(`<p class="kicker">Anotado!</p><div class="big">${esc(c.n)}</div>
