@@ -9,6 +9,7 @@ export default {
     if (pathname === '/api/respostas') {
       if (req.method === 'POST') return salvar(req, env);
       if (req.method === 'GET') return listar(req, env);
+      if (req.method === 'DELETE') return apagar(req, env);
       return json({ erro: 'método não permitido' }, 405);
     }
     return env.ASSETS.fetch(req);
@@ -41,12 +42,30 @@ async function salvar(req, env) {
   return json({ ok: true });
 }
 
-async function listar(req, env) {
+async function autorizado(req, env) {
   const chave = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
-  if (!env.ESCUDEIRO_CHAVE || !(await iguais(chave, env.ESCUDEIRO_CHAVE))) return json({ erro: 'chave errada' }, 401);
+  return !!env.ESCUDEIRO_CHAVE && iguais(chave, env.ESCUDEIRO_CHAVE);
+}
+
+async function listar(req, env) {
+  if (!(await autorizado(req, env))) return json({ erro: 'chave errada' }, 401);
   const { keys } = await env.RESPOSTAS.list({ prefix: 'jogada:' });
   const itens = (await Promise.all(keys.map(k => env.RESPOSTAS.get(k.name, 'json')))).filter(Boolean);
   return json(itens.sort((a, b) => b.atualizado.localeCompare(a.atualizado)));
+}
+
+// DELETE /api/respostas?jogada=<id> apaga uma jogada; sem ?jogada apaga todas (para limpar os testes)
+async function apagar(req, env) {
+  if (!(await autorizado(req, env))) return json({ erro: 'chave errada' }, 401);
+  const jogada = new URL(req.url).searchParams.get('jogada');
+  if (jogada) {
+    if (!/^[\w-]{8,64}$/.test(jogada)) return json({ erro: 'jogada inválida' }, 400);
+    await env.RESPOSTAS.delete(`jogada:${jogada}`);
+    return json({ ok: true, apagadas: 1 });
+  }
+  const { keys } = await env.RESPOSTAS.list({ prefix: 'jogada:' });
+  await Promise.all(keys.map(k => env.RESPOSTAS.delete(k.name)));
+  return json({ ok: true, apagadas: keys.length });
 }
 
 // comparação em tempo constante (via hash) para não vazar a chave por tempo de resposta

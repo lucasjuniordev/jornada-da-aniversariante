@@ -36,6 +36,8 @@
   dd i { display:block; font:500 15px 'Alegreya Sans', sans-serif; font-style:normal; color:var(--ink2); }
   dd.falta { color:#9b8b78; font-weight:500; font-style:italic; }
   .msg { color:#ffe3a1; text-align:center; }
+  .rodape { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+  .apagar { margin-top:14px; min-height:36px; padding:6px 14px; font-size:15px; }
 </style>
 </head>
 <body>
@@ -69,8 +71,21 @@ async function abrir(chave) {
       <div class="topo"><span class="selo${j.completa ? '' : ' andamento'}">${j.completa ? 'Jornada completa' : 'Em andamento'} · nível ${esc(j.nivel)}</span>
         <span class="quando">${new Date(j.atualizado).toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' })}</span></div>
       <dl>${CAMPOS.map(([k, rot]) => { const r = j.respostas[k]; return `<dt>${rot}</dt>` + (r ? `<dd>${esc(r.n)}${r.sessao ? `<i>Sessão: ${esc(r.sessao)}</i>` : ''}${r.c ? `<i>Categoria: ${esc(r.c)}</i>` : ''}${r.dica ? `<i>Pista: ${esc(r.dica)}</i>` : ''}</dd>` : '<dd class="falta">ainda não revelado</dd>'); }).join('')}</dl>
-    </article>`).join('') + '<p style="text-align:center"><button class="sec" id="atualizar">Atualizar</button></p>';
+      <button class="sec apagar" data-apagar="${esc(j.jogada)}">Apagar esta jogada</button>
+    </article>`).join('') + '<p class="rodape"><button class="sec" id="atualizar">Atualizar</button><button id="apagar-tudo">Apagar todas</button></p>';
   document.getElementById('atualizar').onclick = () => abrir(chave);
+  const tudo = document.getElementById('apagar-tudo');
+  if (tudo) tudo.onclick = () => apagar(chave, '', `Apagar as ${itens.length} jogadas do diário? Não dá para desfazer.`);
+  lista.querySelectorAll('[data-apagar]').forEach(b => b.onclick = () => apagar(chave, b.dataset.apagar, 'Apagar esta jogada do diário? Não dá para desfazer.'));
+}
+
+async function apagar(chave, jogada, pergunta) {
+  if (!confirm(pergunta)) return;
+  let r;
+  try { r = await fetch('/api/respostas' + (jogada ? `?jogada=${encodeURIComponent(jogada)}` : ''), { method:'DELETE', headers:{ authorization:`Bearer ${chave}` } }); }
+  catch { r = null; }
+  if (!r?.ok) { alert('Não consegui apagar agora. Tente de novo.'); return; }
+  abrir(chave);
 }
 form.onsubmit = e => { e.preventDefault(); abrir(document.getElementById('chave').value.trim()); };
 const salva = ler();

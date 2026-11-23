@@ -8,7 +8,7 @@ No ar em https://jornada.lucasjrdev.com · diário do escudeiro em https://jorna
 
 - `public/index.html`: o jogo inteiro (motor de perguntas, interface, sons sintetizados, confete). O progresso fica salvo no navegador dela.
 - `public/escudeiro.html`: página do Lucas, que lê as respostas com a chave secreta.
-- `src/index.js`: Worker com `POST /api/respostas` (salva o que já foi descoberto, por jogada) e `GET /api/respostas` (lista; exige `Authorization: Bearer <chave>`). O resto é servido direto dos assets.
+- `src/index.js`: Worker com `POST /api/respostas` (salva o que já foi descoberto, por jogada) e `GET /api/respostas` (lista) e `DELETE /api/respostas[?jogada=<id>]` (apaga uma jogada ou todas, para limpar os testes); os dois exigem `Authorization: Bearer <chave>`. O resto é servido direto dos assets.
 - KV `RESPOSTAS` guarda as jogadas; a chave é o secret `ESCUDEIRO_CHAVE` (`npx wrangler secret put ESCUDEIRO_CHAVE`), nunca no repositório.
 
 Som: `public/sons/fanfarra.mp3` ("Success Fanfare Trumpets", freesound_community no Pixabay), tocado só nas conquistas e no final.
