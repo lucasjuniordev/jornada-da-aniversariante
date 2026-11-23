@@ -9,63 +9,139 @@
 <meta property="og:description" content="Uma aventura com 5 missões, XP e conquistas. Seu escudeiro vai descobrir o que você quer!">
 <meta property="og:url" content="https://jornada.lucasjrdev.com/">
 <meta name="theme-color" content="#14182e">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+<link rel="icon" href="img/escudo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="img/cenario.webp">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Alegreya:wght@700;800&family=Alegreya+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#14182e; --bg2:#22305a; --card:#fbf3dc; --ink:#2b2340; --muted:#5a5166; --rose:#c8406a; --rose2:#f0a3b8; --gold:#f2c14e; --green:#3fae6a; }
+  :root { --night:#121833; --wood:#4a2c17; --wood2:#2a180b; --gold:#e3ae4a; --gold2:#ffe3a1; --gold3:#9a6a1f;
+    --parch:#f6e9c8; --parch2:#e8cf98; --ink:#2b1c10; --ink2:#5a432c; --ruby:#a8323f; --ruby2:#7d1f2c; --emerald:#2f8f5b; }
   * { box-sizing:border-box; }
-  body { margin:0; min-height:100vh; font-family:Nunito, system-ui, sans-serif; color:var(--ink);
-    background: radial-gradient(circle at 15% 10%, #3b4f8f 0, transparent 40%), radial-gradient(circle at 85% 95%, #5a2a55 0, transparent 40%), linear-gradient(170deg, var(--bg), var(--bg2));
-    display:flex; align-items:center; justify-content:center; padding:24px 16px; }
-  main { width:100%; max-width:520px; }
-  .hud { display:flex; align-items:center; gap:10px; color:#fff; font:900 14px Nunito, sans-serif; letter-spacing:.02em; margin-bottom:10px; }
-  .bar { flex:1; height:12px; border:2px solid var(--gold); border-radius:3px; background:#0006; overflow:hidden; }
-  .bar i { display:block; height:100%; background:linear-gradient(90deg, var(--gold), #ffe08a); transition:width .5s; }
-  .steps { display:flex; gap:8px; justify-content:center; margin-bottom:46px; }
-  .steps span { width:38px; height:38px; display:grid; place-items:center; font-size:18px; border-radius:8px; background:#ffffff14; border:2px solid #ffffff22; filter:grayscale(1); opacity:.5; }
-  .steps span.on { border-color:var(--gold); filter:none; opacity:1; box-shadow:0 0 12px var(--gold); }
-  .steps span.done { filter:none; opacity:1; background:var(--green); border-color:#bff0cf; }
-  .card { background:var(--card); border:3px solid var(--gold); outline:3px solid #6b4a12; border-radius:18px; padding:32px 26px 28px; box-shadow:0 30px 60px -20px #000a; text-align:center; animation:in .35s ease; }
-  @keyframes in { from { opacity:0; transform:translateY(10px); } }
-  .orb { width:86px; height:96px; margin:-82px auto 14px; display:grid; place-items:center; font-size:38px;
-    clip-path:polygon(50% 0, 100% 14%, 100% 55%, 50% 100%, 0 55%, 0 14%);
-    background:linear-gradient(160deg, #ffe08a, var(--gold) 45%, #a8741a); animation:float 3s ease-in-out infinite; }
-  .orb.think { animation:float 3s ease-in-out infinite, pulse .5s ease-in-out infinite alternate; }
+  html { background:var(--night); }
+  body { margin:0; min-height:100vh; min-height:100dvh; font:500 18px/1.5 'Alegreya Sans', system-ui, sans-serif; color:var(--ink);
+    display:flex; justify-content:center; padding:16px 20px 40px; }
+  body::before { content:''; position:fixed; inset:0; z-index:-1;
+    background:linear-gradient(180deg, #0b0f24cc 0%, #0b0f2455 35%, #0b0f24aa 100%), url(img/cenario.webp) 62% center / cover no-repeat, var(--night); }
+  main { width:100%; max-width:540px; }
+
+  /* HUD: retrato, nível e XP */
+  .hud { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:center; padding:8px 14px 8px 8px; border-radius:16px;
+    background:linear-gradient(180deg, #5a3820, var(--wood2)); border:2px solid var(--gold3); box-shadow:inset 0 1px 0 #ffffff26, 0 8px 20px #0009; color:var(--parch); }
+  .portrait { width:56px; height:56px; border-radius:50%; display:grid; place-items:center; background:radial-gradient(circle at 50% 35%, #33407e, #121833);
+    border:3px solid var(--gold); box-shadow:0 0 0 2px var(--wood2); }
+  .portrait img { width:44px; height:44px; }
+  .who .row { display:flex; align-items:baseline; gap:8px; margin-bottom:5px; }
+  .who b { font:800 18px Alegreya, Georgia, serif; color:var(--gold2); }
+  .lv { font-weight:800; font-size:13px; color:#2a1a06; background:linear-gradient(#ffe79a, var(--gold)); border-radius:999px; padding:1px 9px; }
+  .xpn { margin-left:auto; font-weight:800; font-size:14px; color:var(--gold2); }
+  .bar { height:14px; border-radius:999px; border:2px solid var(--gold3); background:#00000080; overflow:hidden; box-shadow:inset 0 2px 4px #000a; }
+  .bar i { display:block; height:100%; border-radius:999px; transition:width .6s cubic-bezier(.2,.9,.3,1.2);
+    background:linear-gradient(180deg, #fff2bf 0%, #f0c45c 45%, #b9802a 100%); box-shadow:0 0 10px #f0c45c; }
+
+  /* mapa das missões */
+  .map { list-style:none; display:flex; justify-content:space-between; position:relative; margin:14px 4px 0; padding:0; }
+  .map::before { content:''; position:absolute; left:28px; right:28px; top:27px; border-top:3px dashed #e3ae4a99; }
+  .map li { position:relative; display:flex; flex-direction:column; align-items:center; gap:3px; width:64px; }
+  .map span { width:56px; height:56px; border-radius:50%; display:grid; place-items:center; position:relative;
+    background:radial-gradient(circle at 50% 35%, #2c366e, #121833); border:3px solid #6b5a3a; box-shadow:0 4px 10px #0008; transition:.3s; }
+  .map img { width:42px; height:42px; }
+  .map small { font-size:12px; font-weight:800; color:var(--parch); text-shadow:0 1px 3px #000; }
+  .map .locked img { filter:grayscale(1) brightness(.55); }
+  .map .locked small { opacity:.6; }
+  .map .on span { border-color:var(--gold); animation:glow 1.6s ease-in-out infinite alternate; }
+  .map .done span { border-color:#57c48a; }
+  .map .done span::after { content:'✓'; position:absolute; right:-4px; bottom:-4px; width:22px; height:22px; border-radius:50%; display:grid; place-items:center;
+    font:900 13px sans-serif; color:#fff; background:var(--emerald); border:2px solid #d8f5e4; }
+  @keyframes glow { from { box-shadow:0 0 0 3px #e3ae4a44, 0 0 8px #e3ae4a88; } to { box-shadow:0 0 0 5px #e3ae4a55, 0 0 22px #ffd36e; } }
+
+  /* pergaminho com moldura */
+  .card { position:relative; margin-top:70px; padding:64px 24px 26px; text-align:center; border-radius:12px; animation:in .35s ease;
+    background:radial-gradient(ellipse at 50% 40%, #fbf2da 0%, var(--parch) 55%, var(--parch2) 100%);
+    border:3px solid var(--gold); box-shadow:0 0 0 7px var(--wood), 0 0 0 9px var(--gold3), inset 0 0 50px #b8863b66, 0 26px 50px #000b; }
+  .card::before, .card::after { content:''; position:absolute; top:-12px; width:16px; height:16px; transform:rotate(45deg);
+    background:linear-gradient(135deg, var(--gold2), var(--gold3)); border:2px solid var(--wood2); }
+  .card::before { left:-12px; } .card::after { right:-12px; }
+  @keyframes in { from { opacity:0; transform:translateY(12px); } }
+  .crest { position:absolute; top:-58px; left:50%; width:110px; height:110px; margin-left:-55px; border-radius:50%; display:grid; place-items:center;
+    background:radial-gradient(circle at 50% 35%, #34418a, #121833); border:4px solid var(--gold); box-shadow:0 0 0 5px var(--wood), 0 10px 24px #000a;
+    animation:float 3s ease-in-out infinite; }
+  .crest img { width:84px; height:84px; filter:drop-shadow(0 4px 4px #0008); }
+  .crest.think { animation:float 3s ease-in-out infinite, glow .7s ease-in-out infinite alternate; }
   @keyframes float { 50% { transform:translateY(-6px); } }
-  @keyframes pulse { to { filter:brightness(1.25); } }
-  .kicker { font:900 13px/1.4 Nunito, sans-serif; letter-spacing:.08em; text-transform:uppercase; color:var(--rose); margin:0 0 12px; }
-  h1, h2 { font-weight:900; line-height:1.2; margin:0 0 14px; }
-  h1, .title { font-family:Cinzel, Georgia, serif; font-weight:800; letter-spacing:.01em; }
-  h1 { font-size:34px; } h2 { font-size:24px; } h2.title { font-size:27px; }
-  p { color:var(--muted); font-size:17px; line-height:1.55; margin:0 0 18px; }
-  .big { font-family:Cinzel, Georgia, serif; font-size:28px; line-height:1.2; color:var(--ink); margin:6px 0 4px; font-weight:700; }
-  .xp { display:inline-block; font:900 15px Nunito, sans-serif; color:#8a5a00; background:#ffe9a8; border:2px solid var(--gold); border-radius:6px; padding:8px 10px; margin:0 4px 16px; animation:pop .4s ease; }
-  .badge { font-size:54px; animation:pop .5s ease; }
-  @keyframes pop { from { transform:scale(.3); opacity:0; } 70% { transform:scale(1.15); } }
-  .sub { font-size:14px; color:var(--muted); margin-bottom:20px; }
-  .answers { display:grid; gap:8px; }
+
+  .kicker { display:flex; align-items:center; justify-content:center; gap:10px; font:800 13px/1.3 'Alegreya Sans', sans-serif; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ruby); margin:0 0 10px; }
+  .kicker::before, .kicker::after { content:''; width:26px; height:2px; background:linear-gradient(90deg, transparent, currentColor); }
+  .kicker::after { transform:scaleX(-1); }
+  h1, h2 { margin:0 0 14px; color:var(--ink); line-height:1.2; }
+  h1, .title { font-family:'Cinzel Decorative', Georgia, serif; font-weight:700; letter-spacing:.01em; text-shadow:0 1px 0 #fff9; }
+  h1 { font-size:31px; }
+  h2 { font:800 25px/1.25 Alegreya, Georgia, serif; }
+  h2.title { font-size:25px; }
+  p { color:var(--ink2); margin:0 0 18px; }
+  p small { font-size:15px; }
+  .big { font:800 28px/1.2 Alegreya, Georgia, serif; color:var(--ruby2); margin:4px 0 4px; }
+  .sub { font-size:16px; color:var(--ink2); margin-bottom:20px; }
+
+  /* botões */
+  button, .btn { font:800 18px 'Alegreya Sans', sans-serif; cursor:pointer; text-decoration:none; display:inline-block; color:var(--ink); transition:transform .1s, box-shadow .1s, filter .15s; }
+  .answers { display:grid; gap:9px; margin-bottom:6px; }
+  .answers button { display:flex; align-items:center; gap:12px; text-align:left; padding:12px 16px; border-radius:10px;
+    background:linear-gradient(180deg, #fffaf0, #f1dfb4); border:2px solid #b48a4a; box-shadow:0 3px 0 #8b6532, inset 0 1px 0 #fff; }
+  .answers button::before { content:''; flex:none; width:13px; height:13px; transform:rotate(45deg); border:2px solid #0004; background:var(--g, var(--gold));
+    box-shadow:inset 0 0 0 2px #ffffff55; }
+  .answers button:hover { filter:brightness(1.04); border-color:var(--gold); transform:translateY(-1px); }
+  .answers button:active { transform:translateY(2px); box-shadow:0 1px 0 #8b6532; }
+  .g0 { --g:#2f8f5b; } .g1 { --g:#86c35c; } .g2 { --g:#a7a29a; } .g3 { --g:#e08a3a; } .g4 { --g:#b8323f; }
   .answers.row { grid-template-columns:1fr 1fr; }
-  button, .btn { font:inherit; font-weight:800; border:0; border-radius:999px; padding:13px 18px; cursor:pointer; text-decoration:none; display:inline-block;
-    background:#f3e6ea; color:var(--ink); transition:transform .1s, background .15s; }
-  button:hover, .btn:hover { background:#f1d3dc; }
-  button:active { transform:scale(.97); }
-  button:focus-visible, .btn:focus-visible, textarea:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
-  .primary { background:var(--rose); color:#fff; } .primary:hover { background:#cf416a; }
-  .ghost { background:none; color:var(--muted); font-weight:600; font-size:14px; padding:8px; }
-  .ghost:hover { background:none; color:var(--ink); }
-  .count { font-size:13px; color:var(--muted); margin-top:14px; }
-  .pick { text-align:left; }
-  .pick button { width:100%; text-align:left; border-radius:16px; font-weight:600; }
-  .pick small { display:block; font-weight:400; color:var(--muted); }
-  textarea { width:100%; font:inherit; border:2px solid #ecd9de; border-radius:16px; padding:12px; min-height:70px; resize:vertical; background:#fff; color:var(--ink); margin-bottom:12px; }
-  .summary { text-align:left; display:grid; gap:10px; margin:6px 0 20px; }
-  .summary div { background:#fff; border:1px solid #f0dfe4; border-radius:16px; padding:12px 14px; }
-  .summary b { display:block; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--rose); }
-  .summary i { display:block; font-style:normal; font-size:13px; color:var(--muted); }
+  .answers.row button { justify-content:center; }
+  .answers.row button::before { display:none; }
+  .pick small { display:block; font-weight:500; font-size:15px; color:var(--ink2); }
+  .primary, .answers .primary { color:#fff4da; text-shadow:0 1px 0 #0007; padding:14px 28px; border-radius:12px; border:2px solid var(--gold);
+    background:linear-gradient(180deg, #cf5262, var(--ruby2)); box-shadow:0 4px 0 #4e111b, 0 10px 20px #0004, inset 0 1px 0 #ffffff55; }
+  .primary:hover { filter:brightness(1.08); }
+  .primary:active { transform:translateY(3px); box-shadow:0 1px 0 #4e111b; }
+  .ghost, .answers .ghost { background:none; border:0; box-shadow:none; color:var(--ink2); font-weight:700; font-size:16px; padding:10px; text-decoration:underline; text-underline-offset:3px; }
+  .answers .ghost { justify-content:center; }
+  .answers .ghost::before { display:none; }
+  button:focus-visible, .btn:focus-visible, textarea:focus-visible { outline:3px solid #2c5bd8; outline-offset:3px; }
+
+  .xp { display:inline-block; font:800 15px 'Alegreya Sans', sans-serif; color:#3e2405; background:linear-gradient(180deg, #ffe79a, var(--gold));
+    border:2px solid var(--gold3); border-radius:999px; padding:5px 14px; margin:0 4px 14px; box-shadow:0 3px 8px #0003; animation:pop .45s ease; }
+  @keyframes pop { from { transform:scale(.3); opacity:0; } 70% { transform:scale(1.12); } }
+
+  /* conquista */
+  .reward { position:relative; width:170px; height:150px; margin:0 auto 6px; display:grid; place-items:center; }
+  .reward::before { content:''; position:absolute; inset:-10px 0; border-radius:50%; animation:spin 12s linear infinite;
+    background:repeating-conic-gradient(#f3c75a66 0 10deg, transparent 10deg 24deg); mask:radial-gradient(circle, #000 30%, transparent 70%); -webkit-mask:radial-gradient(circle, #000 30%, transparent 70%); }
+  .reward img { position:relative; width:120px; height:120px; filter:drop-shadow(0 6px 8px #0006); animation:pop .6s ease; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  textarea { width:100%; font:500 17px 'Alegreya Sans', sans-serif; border:2px solid #b48a4a; border-radius:10px; padding:12px; min-height:80px; resize:vertical;
+    background:#fffaf0; color:var(--ink); margin-bottom:12px; }
+
+  /* inventário */
+  .inv { list-style:none; padding:0; margin:4px 0 18px; display:grid; gap:10px; text-align:left; }
+  .inv li { display:grid; grid-template-columns:60px 1fr; gap:12px; align-items:center; padding:8px 12px 8px 8px; border-radius:12px;
+    background:#fffaf0b3; border:2px solid #c9a462; }
+  .slot { width:60px; height:60px; border-radius:10px; display:grid; place-items:center; background:radial-gradient(circle at 50% 35%, #2c366e, #121833);
+    border:2px solid var(--gold); box-shadow:inset 0 0 10px #000a; }
+  .slot img { width:48px; height:48px; }
+  .inv b { display:block; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ruby); }
+  .inv .v { font:800 19px/1.25 Alegreya, Georgia, serif; color:var(--ink); }
+  .inv i { display:block; font-style:normal; font-size:15px; color:var(--ink2); }
   .actions { display:grid; gap:10px; }
-  .wa { background:#25d366; color:#fff; } .wa:hover { background:#1fb857; }
-  .note { font-size:12px; margin-top:14px; }
+  .wa { color:#fff; padding:14px 20px; border-radius:12px; border:2px solid var(--gold); background:linear-gradient(180deg, #34c46e, #1c8a49);
+    box-shadow:0 4px 0 #0f5a2e, inset 0 1px 0 #ffffff55; text-shadow:0 1px 0 #0006; }
+  .actions #copy { padding:12px; border-radius:12px; border:2px solid #b48a4a; background:linear-gradient(180deg, #fffaf0, #f1dfb4); box-shadow:0 3px 0 #8b6532; }
+  .note { font-size:15px; margin-top:14px; }
+
+  @media (max-width:420px) {
+    body { font-size:17px; }
+    .map span { width:48px; height:48px; } .map img { width:36px; height:36px; } .map::before { top:23px; } .map li { width:56px; } .map small { font-size:11px; }
+    .card { padding:60px 18px 22px; } h1 { font-size:27px; } h2 { font-size:23px; }
+  }
+  @media (prefers-reduced-motion:reduce) { *, *::before { animation:none !important; transition:none !important; } }
 </style>
 </head>
 <body>
@@ -291,10 +367,12 @@ const lvl = () => 1 + Math.floor(xp / 100);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[ch]));
 
 function hud() {
-  hudEl.innerHTML = `<div class="hud"><span>Nv ${lvl()}</span><div class="bar" role="progressbar" aria-valuenow="${xp % 100}" aria-valuemax="100"><i style="width:${xp % 100}%"></i></div><span>${xp} XP</span></div>
-    <div class="steps" aria-hidden="true">${MODS.map((m, i) => `<span class="${i < mi ? 'done' : i === mi ? 'on' : ''}">${i < mi ? '✔' : m.emoji}</span>`).join('')}</div>`;
+  hudEl.innerHTML = `<div class="hud"><div class="portrait"><img src="img/escudo.webp" alt=""></div><div class="who">
+      <div class="row"><b>Aventureira</b><span class="lv">Nível ${lvl()}</span><span class="xpn">${xp} XP</span></div>
+      <div class="bar" role="progressbar" aria-label="Experiência até o próximo nível" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${xp % 100}"><i style="width:${xp % 100}%"></i></div></div></div>
+    <ol class="map" aria-label="Missões">${MODS.map((m, i) => `<li class="${i < mi ? 'done' : i === mi ? 'on' : 'locked'}"><span><img src="img/${m.key}.webp" alt=""></span><small>${m.label === 'Comemoração' ? 'Festa' : m.label}</small></li>`).join('')}</ol>`;
 }
-function view(html, think) { app.innerHTML = `<div class="card"><div class="orb${think ? ' think' : ''}">${mi >= 0 && mi < MODS.length ? MODS[mi].emoji : '🛡️'}</div>${html}</div>`; hud(); app.querySelector('button, .btn')?.focus(); }
+function view(html, think) { app.innerHTML = `<div class="card"><div class="crest${think ? ' think' : ''}"><img src="img/${mi >= 0 && mi < MODS.length ? MODS[mi].key : 'escudo'}.webp" alt=""></div>${html}</div>`; hud(); app.querySelector('button, .btn')?.focus(); }
 function on(sel, fn) { app.querySelectorAll(sel).forEach(b => b.onclick = () => fn(b.dataset.v)); }
 
 function start() {
@@ -321,7 +399,7 @@ function step(gain) {
   if (shouldGuess(m, st)) return guess();
   curQ = nextQ(m, st);
   view(`<p class="kicker">${m.label} · pergunta ${st.n + 1}</p>${gain ? '<div class="xp">+10 XP</div>' : ''}<h2>${m.qs[curQ][0]}</h2>
-    <div class="answers">${ANS.map(([t, v]) => `<button data-v="${v}">${t}</button>`).join('')}</div>
+    <div class="answers">${ANS.map(([t, v], k) => `<button class="g${k}" data-v="${v}">${t}</button>`).join('')}</div>
     <button class="ghost" data-skip="1">Deixa que eu escolho da lista</button>`);
   app.querySelectorAll('.answers button').forEach(b => b.onclick = () => { answer(m, st, curQ, +b.dataset.v); xp += 10; step(true); });
   app.querySelector('[data-skip]').onclick = pickList;
@@ -366,7 +444,7 @@ function celebrate() {
   const m = MODS[mi], r = result[m.key], antes = lvl();
   const ganho = 50 + (r.critico ? 30 : 0);
   xp += ganho;
-  view(`<p class="kicker">Missão cumprida!</p><div class="badge">${m.conquista[0]}</div><h2 class="title">Conquista: ${m.conquista[1]}</h2>
+  view(`<p class="kicker">Conquista desbloqueada</p><div class="reward"><img src="img/${m.key}.webp" alt=""></div><h2 class="title">${m.conquista[1]}</h2>
     <div class="xp">+${ganho} XP${r.critico ? ' · acerto crítico!' : ''}</div>${lvl() > antes ? `<div class="xp">⬆ Subiu para o nível ${lvl()}!</div>` : ''}
     <p class="sub">${m.label}: <b>${esc(r.n)}</b></p><button class="primary">${mi + 1 < MODS.length ? 'Próxima missão' : 'Abrir o baú final'}</button>`);
   on('button', nextMod);
@@ -378,17 +456,18 @@ function texto() {
     `🎁 Presente: ${p.n}${p.c ? ' (' + p.c + ')' : ''}${p.dica ? ' — dica: ' + p.dica : ''}`,
     `🥳 Niver: ${r.festa.n}`].join('\n');
 }
+const slot = (ic, rotulo, valor, extra = '') => `<li><span class="slot"><img src="img/${ic}.webp" alt=""></span><div><b>${rotulo}</b><div class="v">${esc(valor)}</div>${extra}</div></li>`;
 function finish() {
   const r = result, p = r.presente, t = texto();
-  view(`<p class="kicker">Jornada completa · Nível ${lvl()}</p><h2>Seu inventário</h2>
-    <div class="summary">
-      <div><b>🎬 Filme</b>${esc(r.filme.n)}<i>Cinemark Taguatinga Shopping · comprar até 28/11</i></div>
-      <div><b>📅 Dia</b>${esc(r.dia.n)}${r.dia.sessao ? `<i>Sessão: ${esc(r.dia.sessao)}</i>` : ''}</div>
-      <div><b>🍿 Banquete</b>${esc(r.comida.n)}</div>
-      <div><b>🎁 Tesouro</b>${esc(p.n)}${p.c ? `<i>Categoria: ${esc(p.c)}</i>` : ''}${p.dica ? `<i>Pista: ${esc(p.dica)}</i>` : ''}</div>
-      <div><b>🥳 Celebração</b>${esc(r.festa.n)}</div>
-    </div>
-    <p class="sub">Conquistas: ${MODS.map(m => m.conquista.join(' ')).join(' · ')}</p>
+  view(`<p class="kicker">Jornada completa · Nível ${lvl()}</p><h2 class="title">Seu inventário</h2>
+    <ul class="inv">
+      ${slot('filme', 'Filme', r.filme.n, '<i>Cinemark Taguatinga Shopping · comprar até 28/11</i>')}
+      ${slot('dia', 'Dia', r.dia.n, r.dia.sessao ? `<i>Sessão: ${esc(r.dia.sessao)}</i>` : '')}
+      ${slot('comida', 'Banquete', r.comida.n)}
+      ${slot('presente', 'Tesouro', p.n, (p.c ? `<i>Categoria: ${esc(p.c)}</i>` : '') + (p.dica ? `<i>Pista: ${esc(p.dica)}</i>` : ''))}
+      ${slot('festa', 'Celebração', r.festa.n)}
+    </ul>
+    <p class="sub">Conquistas: ${MODS.map(m => m.conquista[1]).join(' · ')}</p>
     <div class="actions">
       <a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">Enviar pro meu escudeiro no WhatsApp</a>
       <button id="copy">Copiar respostas</button>
