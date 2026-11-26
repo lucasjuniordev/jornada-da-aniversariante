@@ -26,7 +26,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preload" as="image" href="img/cenario.webp">
+<link rel="preload" as="image" href="img/vila.webp">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Alegreya:wght@700;800&family=Alegreya+Sans:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root { --night:#121833; --wood:#4a2c17; --wood2:#2a180b; --gold:#e3ae4a; --gold2:#ffe3a1; --gold3:#9a6a1f;
@@ -216,13 +216,60 @@
     .map li { flex-direction:row; width:auto; gap:14px; }
     .map small { font-size:17px; }
   }
+  /* ---- vila ---- */
+  .mundo { margin-top:14px; }
+  .vila { position:relative; container-type:size; aspect-ratio:768 / 1376; margin:0 auto; overflow:hidden; cursor:pointer; touch-action:manipulation; user-select:none; -webkit-user-select:none;
+    height:min(calc(100dvh - 215px), calc((100vw - 46px) * 1.7917)); border-radius:14px;
+    background:#3c5a2a url(img/vila.webp) center / 100% 100% no-repeat; border:3px solid var(--gold); box-shadow:0 0 0 6px var(--wood), 0 18px 40px #000b; }
+  .npc, .portao { position:absolute; translate:-50% -100%; background:none; border:0; padding:0; cursor:pointer; display:flex; flex-direction:column; align-items:center; -webkit-tap-highlight-color:transparent; }
+  .npc img { height:10.5cqh; width:auto; pointer-events:none; filter:drop-shadow(0 3px 2px #0007); }
+  .npc small { margin-top:-1px; font:800 clamp(10px, 1.6cqh, 13px)/1.2 'Alegreya Sans', sans-serif; color:#fff4da; white-space:nowrap;
+    background:#2a180bd9; border:1px solid var(--gold3); border-radius:999px; padding:1px 7px; }
+  .npc.depois img { filter:grayscale(.4) brightness(.85) drop-shadow(0 3px 2px #0007); }
+  .balao { position:absolute; top:-3.6cqh; left:50%; translate:-50% 0; width:max(22px, 3.4cqh); height:max(22px, 3.4cqh); border-radius:50%;
+    display:none; place-items:center; font:900 max(14px, 2.1cqh)/1 'Alegreya Sans', sans-serif; }
+  .npc.agora .balao, .portao.aberto .balao { display:grid; color:#3e2405; background:linear-gradient(#ffe79a, var(--gold)); border:2px solid var(--gold3); animation:pular 1s ease-in-out infinite; }
+  .npc.agora .balao::after, .portao.aberto .balao::after { content:'!'; }
+  .npc.feito .balao { display:grid; color:#fff; background:var(--emerald); border:2px solid #d8f5e4; }
+  .npc.feito .balao::after { content:'✓'; }
+  @keyframes pular { 50% { transform:translateY(-6px); } }
+  .portao { width:max(44px, 15%); height:max(44px, 8.5%); border-radius:46% 46% 6px 6px; }
+  .portao .balao { top:-30%; }
+  .portao.aberto { animation:portal 1.6s ease-in-out infinite alternate; }
+  @keyframes portal { from { box-shadow:0 0 10px 2px #ffd36e88; } to { box-shadow:0 0 30px 10px #ffd36e; } }
+  .npc:focus-visible, .portao:focus-visible { outline:3px solid #2c5bd8; outline-offset:2px; border-radius:10px; }
+  .heroi { position:absolute; height:11.5cqh; translate:-50% -100%; pointer-events:none; filter:drop-shadow(0 3px 2px #0007);
+    transition-property:left, top; transition-timing-function:linear; }
+  .heroi.esquerda { scale:-1 1; }
+  .heroi.andando { animation:passo .34s ease-in-out infinite; }
+  @keyframes passo { 50% { transform:translateY(-5%) rotate(2deg); } }
+  .aviso { position:absolute; left:50%; bottom:2.5%; translate:-50% 0; z-index:2000; width:max-content; max-width:90%; margin:0; pointer-events:none;
+    font:700 15px/1.35 'Alegreya Sans', sans-serif; color:var(--ink); text-align:center; background:var(--parch);
+    border:2px solid var(--gold); border-radius:12px; box-shadow:0 0 0 3px var(--wood), 0 8px 18px #0008; padding:8px 14px; animation:in .25s ease; }
+  .aviso[hidden] { display:none; }
+
+  /* ---- diálogo por cima da vila ---- */
+  .dialogo { position:fixed; inset:0; z-index:5000; overflow-y:auto; overscroll-behavior:contain; background:#0b0f24b8; padding:78px 18px 28px; }
+  .dialogo[hidden] { display:none; }
+  .dialogo .card { max-width:540px; margin:0 auto; }
+  .fechar { position:absolute; top:6px; right:6px; width:44px; height:44px; border:0; border-radius:50%; background:none; color:var(--ink2); font:900 20px sans-serif; cursor:pointer; }
+  .crest img.npc-rosto { width:102px; height:102px; object-fit:cover; object-position:50% 4%; background:radial-gradient(circle at 50% 35%, #34418a, #121833); }
+  .fala { font:italic 500 19px/1.45 Alegreya, Georgia, serif; color:var(--ink); }
+  .dica-jogo { font-size:15px; background:#fff8e6; border:1px dashed #c9a462; border-radius:10px; padding:8px 12px; }
+
+  @media (min-width:980px) {
+    .mundo { margin-top:0; }
+    .vila { height:min(calc(100dvh - 76px), 900px); }
+  }
+  @media (prefers-reduced-motion:reduce) { .heroi { transition:none !important; } }
 </style>
 </head>
 <body>
 <video class="bg" id="bg" src="img/cenario.mp4" poster="img/cenario.webp" muted loop playsinline autoplay preload="auto" aria-hidden="true"></video>
 <main>
   <div id="hud" aria-label="Progresso"></div>
-  <div id="app" aria-live="polite"></div>
+  <div class="mundo"><div class="vila" id="vila" aria-label="Vila: toque no chão para andar"><p class="aviso" id="aviso" role="status" hidden></p></div></div>
+  <div class="dialogo" id="dialogo" hidden><div id="app" aria-live="polite"></div></div>
 </main>
 <script>
 // Cada missão: candidatos com etiquetas + perguntas sobre uma etiqueta. O escudeiro escolhe a pergunta que melhor divide os candidatos restantes.
@@ -453,19 +500,31 @@ function selfTest() {
 // ---- interface ----
 const ELA = 'Vitória', ELE = 'Lucas';
 const app = document.getElementById('app'), hudEl = document.getElementById('hud');
-let result = {}, mi = -1, st = null, curQ = -1, xp = 0, hist = [], fase = 'inicio', jogada = null;
+const dialogo = document.getElementById('dialogo'), vilaEl = document.getElementById('vila'), avisoEl = document.getElementById('aviso');
+let result = {}, mi = -1, st = null, curQ = -1, xp = 0, hist = [], fase = 'inicio', jogada = null, carta = false;
 const lvl = () => 1 + Math.floor(xp / 100);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[ch]));
 const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const novaJogada = () => crypto.randomUUID?.() ?? `j-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
+// ---- a vila: cada missão tem um morador; posições em % do mapa (pés do personagem) ----
+const NPCS = [
+  { nome:'Bilheteiro', img:'npc-bilheteiro', x:39, y:80.5, fala:'Bem-vinda à Tenda dos Mil Filmes! Me ajuda a achar o filme certo pra vocês?' },
+  { nome:'Relojoeira', img:'npc-relojoeira', x:61, y:76.5, fala:'Tic-tac! Filme escolhido? Então vamos achar o dia perfeito.' },
+  { nome:'Cozinheira', img:'npc-cozinheira', x:43, y:47.5, fala:'Sessão de cinema pede banquete! Vamos descobrir o que você quer comer.' },
+  { nome:'Mercador', img:'npc-mercador', x:65, y:44.5, fala:'Psiu! Tenho tesouros de todos os cantos do reino. Qual será o seu presente?' },
+  { nome:'Arauto', img:'npc-arauto', x:39, y:20.5, fala:'Tu-tu-ruuu! O reino quer celebrar seu aniversário. Como vai ser a festa?' },
+];
+const PORTAO = { x:50.5, y:17 }, INICIO = { x:50, y:89.5 };
+const pos = { vitoria:{ ...INICIO }, lucas:{ x:INICIO.x + 7, y:INICIO.y + .5 } };
+
 // ---- progresso salvo neste navegador: fechou a aba, volta de onde parou ----
 const CHAVE = 'jornada-v1';
 function salvar() {
-  try { localStorage.setItem(CHAVE, JSON.stringify({ mi, xp, result, fase, jogada, st: st && { w:st.w, asked:[...st.asked], wrong:st.wrong, n:st.n } })); } catch {}
+  try { localStorage.setItem(CHAVE, JSON.stringify({ mi, xp, result, fase, jogada, carta, st: st && { w:st.w, asked:[...st.asked], wrong:st.wrong, n:st.n } })); } catch {}
 }
 function carregar() { try { return JSON.parse(localStorage.getItem(CHAVE)); } catch { return null; } }
-function zerar() { try { localStorage.removeItem(CHAVE); } catch {} result = {}; mi = -1; xp = 0; hist = []; fase = 'inicio'; st = null; jogada = novaJogada(); }
+function zerar() { try { localStorage.removeItem(CHAVE); } catch {} result = {}; mi = -1; xp = 0; hist = []; fase = 'inicio'; st = null; carta = false; jogada = novaJogada(); }
 
 // ---- o mensageiro: manda ao Lucas o que já foi descoberto (o WhatsApp fica de reserva) ----
 function enviar() {
@@ -492,20 +551,100 @@ function confete() {
   })();
 }
 
-// ---- tela ----
+// ---- HUD e mochila ----
 function hud(brilho) {
   hudEl.innerHTML = `<div class="hud${brilho ? ' ganhou' : ''}"><div class="portrait"><img src="img/aventureira.webp" alt="Retrato de ${ELA}, a aventureira"></div><div class="who">
       <div class="row"><b>${ELA}</b><span class="lv">Nível ${lvl()}</span><span class="xpn">${xp} XP</span>
         <button class="mudo" aria-label="${mudo ? 'Ligar os sons' : 'Desligar os sons'}" aria-pressed="${mudo}">${mudo ? '🔇' : '🔊'}</button></div>
       <div class="bar" role="progressbar" aria-label="Experiência até o próximo nível" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${xp % 100}"><i style="width:${xp % 100}%"></i></div></div></div>
-    <ol class="map" aria-label="Missões">${MODS.map((m, i) => `<li class="${i < mi ? 'done' : i === mi ? 'on' : 'locked'}"><span><img src="img/${m.key}.webp" alt=""></span><small>${m.label === 'Comemoração' ? 'Festa' : m.label}</small></li>`).join('')}</ol>`;
+    <ol class="map" aria-label="Mochila">${MODS.map((m, i) => `<li class="${i < mi ? 'done' : i === mi ? 'on' : 'locked'}"><span><img src="img/${m.key}.webp" alt=""></span><small>${i < mi ? m.label === 'Comemoração' ? 'Festa' : m.label : '?'}</small></li>`).join('')}</ol>`;
   hudEl.querySelector('.mudo').onclick = () => { mudo = !mudo; try { localStorage.setItem('jornada-mudo', mudo ? '1' : '0'); } catch {} hud(); };
 }
+
+// ---- mapa: moradores, portão e os dois heróis ----
+function desenharVila() {
+  vilaEl.querySelectorAll('.npc').forEach((b, i) => {
+    const estado = i < mi ? 'feito' : i === mi ? 'agora' : 'depois';
+    b.className = `npc ${estado}`;
+    b.setAttribute('aria-label', `${NPCS[i].nome}: ${estado === 'feito' ? 'missão concluída' : estado === 'agora' ? 'tem uma missão para você' : 'missão ainda trancada'}`);
+  });
+  const aberto = mi >= MODS.length;
+  const p = vilaEl.querySelector('.portao');
+  p.classList.toggle('aberto', aberto);
+  p.setAttribute('aria-label', aberto ? 'Portão do castelo: aberto, entrar' : 'Portão do castelo: trancado');
+}
+function montarVila() {
+  vilaEl.insertAdjacentHTML('beforeend', NPCS.map((n, i) => `<button class="npc" data-i="${i}" style="left:${n.x}%;top:${n.y}%;z-index:${Math.round(n.y * 10)}">
+      <span class="balao" aria-hidden="true"></span><img src="img/${n.img}.webp" alt=""><small>${n.nome}</small></button>`).join('')
+    + `<button class="portao" style="left:${PORTAO.x}%;top:${PORTAO.y}%"><span class="balao" aria-hidden="true"></span></button>`
+    + `<img class="heroi" id="lucas" src="img/heroi-lucas.webp" alt="${ELE}, o escudeiro">`
+    + `<img class="heroi" id="vitoria" src="img/heroi-vitoria.webp" alt="${ELA}, a aventureira">`);
+  vilaEl.querySelectorAll('.npc').forEach(b => b.onclick = e => { e.stopPropagation(); falarCom(+b.dataset.i); });
+  vilaEl.querySelector('.portao').onclick = e => { e.stopPropagation(); irAoPortao(); };
+  vilaEl.onclick = e => {  // toque no chão: anda até lá
+    if (!dialogo.hidden) return;
+    const r = vilaEl.getBoundingClientRect();
+    andar(Math.min(92, Math.max(8, (e.clientX - r.left) / r.width * 100)), Math.min(95, Math.max(22, (e.clientY - r.top) / r.height * 100)));
+  };
+  colocar('vitoria', 0); colocar('lucas', 0);
+}
+function colocar(quem, dur) {
+  const el = document.getElementById(quem), p = pos[quem];
+  el.style.transitionDuration = `${dur}s`;
+  el.style.transitionDelay = quem === 'lucas' && dur ? '.18s' : '0s';
+  el.style.left = `${p.x}%`; el.style.top = `${p.y}%`; el.style.zIndex = Math.round(p.y * 10) + 1;
+}
+let chegada = null;
+function andar(x, y, depois) {
+  clearTimeout(chegada);
+  const r = vilaEl.getBoundingClientRect(), v = pos.vitoria;
+  const dist = Math.hypot((x - v.x) * r.width, (y - v.y) * r.height) / 100;
+  const dur = reduz ? 0 : Math.min(2.2, dist / 170);
+  for (const [quem, dx, dy] of [['vitoria', 0, 0], ['lucas', x > v.x ? -7 : 7, .6]]) {
+    const el = document.getElementById(quem);
+    el.classList.toggle('esquerda', x < v.x);
+    if (dur) el.classList.add('andando');
+    pos[quem] = { x:Math.min(95, Math.max(5, x + dx)), y:Math.min(97, y + dy) };
+    colocar(quem, dur);
+  }
+  chegada = setTimeout(() => { vilaEl.querySelectorAll('.heroi').forEach(h => h.classList.remove('andando')); depois?.(); }, dur * 1000 + (dur ? 220 : 0));
+}
+function aviso(txt) {
+  avisoEl.textContent = txt; avisoEl.hidden = false;
+  clearTimeout(aviso.t); aviso.t = setTimeout(() => { avisoEl.hidden = true; }, 3200);
+}
+function falarCom(i) {
+  const n = NPCS[i];
+  andar(n.x + (n.x > 50 ? -9 : 9), n.y + 1.5, () => {
+    if (mi < 0) return aviso('Toque em "Explorar a vila" para começar.');
+    if (i < mi) return aviso(`${n.nome}: "Obrigado, ${ELA}! Já anotei: ${result[MODS[i].key]?.n ?? 'tudo certo'}."`);
+    if (i > mi) return aviso(`${n.nome}: "Ainda não é minha vez! Fale primeiro com o ${NPCS[mi]?.nome ?? 'Arauto'}."`);
+    abrirMissao();
+  });
+}
+function irAoPortao() {
+  andar(PORTAO.x + 10, PORTAO.y + 7, () => {
+    if (mi < MODS.length) return aviso('O portão do castelo está trancado. Complete as 5 missões da vila!');
+    finish(!carta);
+  });
+}
+
+// ---- diálogo ----
+let aoFechar = null;
+function abrir() { dialogo.hidden = false; document.body.classList.add('conversando'); }
+function fechar() { dialogo.hidden = true; document.body.classList.remove('conversando'); hud(); desenharVila(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !dialogo.hidden) (aoFechar || fechar)(); });
 const DUO = `<div class="crest duo"><img src="img/aventureira.webp" alt="${ELA}, a aventureira"><img src="img/escudeiro.webp" alt="${ELE}, o escudeiro"></div>`;
+const rostoNpc = i => `<div class="crest"><img class="face npc-rosto" src="img/${NPCS[i].img}.webp" alt="${NPCS[i].nome}"></div>`;
 function view(html, think, topo, brilho) {
+  aoFechar = fechar;
   const crest = topo || (think ? `<div class="crest think"><img class="face" src="img/escudeiro.webp" alt="${ELE} pensando"></div>`
     : `<div class="crest"><img src="img/${mi >= 0 && mi < MODS.length ? MODS[mi].key : 'escudo'}.webp" alt=""></div>`);
-  app.innerHTML = `<div class="card">${crest}${html}</div>`; hud(brilho); app.querySelector('button, .btn')?.focus();
+  app.innerHTML = `<div class="card" role="dialog" aria-modal="true">${crest}<button class="fechar" aria-label="Voltar para a vila">✕</button>${html}</div>`;
+  app.querySelector('.fechar').onclick = () => (aoFechar || fechar)();
+  abrir(); hud(brilho); desenharVila();
+  dialogo.scrollTop = 0;
+  app.querySelector('.card button:not(.fechar), .card .btn')?.focus();
 }
 const ehPoster = m => m.key === 'filme' ? ' poster' : '';
 const cartao = (m, c) => `<button class="opcao${ehPoster(m)}" data-v="${m.cands.indexOf(c)}"><img src="img/${c.img}.webp" alt="" loading="lazy">
@@ -520,31 +659,27 @@ function ligarVoltar() {
 
 function start() {
   const s = carregar();
-  if (s?.jogada && s.mi >= 0) {
-    const onde = s.fase === 'final' ? 'Sua jornada está completa!' : `Você parou na missão ${Math.min(s.mi + 1, MODS.length)} de ${MODS.length}, no nível ${1 + Math.floor(s.xp / 100)}.`;
-    view(`<p class="kicker">Bem-vinda de volta</p><h1>${ELA}!</h1><p>${onde}</p>
-      <div class="actions"><button class="primary" id="seguir">${s.fase === 'final' ? 'Ver minha carta' : 'Continuar jornada'}</button>
-      <button class="ghost" id="zero">Começar do zero</button></div>`, false, DUO);
-    app.querySelector('#seguir').onclick = () => retomar(s);
-    app.querySelector('#zero').onclick = () => { zerar(); start(); };
-    return;
-  }
+  if (s?.jogada && s.mi >= 0) { retomar(s); return; }
+  hud(); desenharVila();
   view(`<p class="kicker">Nova aventura</p><h1>A Jornada da Aniversariante</h1>
-    <p>Bem-vinda, aventureira ${ELA}! ${ELE}, seu fiel escudeiro (esse aí do lado), preparou 5 missões: o filme, o dia, o banquete, o tesouro do seu aniversário e a grande celebração. Responda com sinceridade, ganhe XP e suba de nível. A cada resposta, ele chega mais perto do que você quer.</p>
-    <button class="primary">Iniciar jornada</button>`, false, DUO);
-  on('button', () => { zerar(); nextMod(); });
+    <p>Bem-vinda, aventureira ${ELA}! ${ELE}, seu fiel escudeiro (esse aí do lado), preparou uma vila inteira pra você. Converse com os 5 moradores, cumpra as missões, ganhe XP e encha a mochila. No fim, o portão do castelo se abre.</p>
+    <p class="dica-jogo">Toque no chão para andar e nos moradores para conversar. Quem tem missão pra você mostra um <b>!</b> dourado.</p>
+    <button class="primary">Explorar a vila</button>`, false, DUO);
+  const comecar = () => { zerar(); nextMod(); fechar(); aviso(`Comece pelo ${NPCS[0].nome}, na tenda do cinema!`); };
+  on('.primary', comecar); aoFechar = comecar;
 }
 function retomar(s) {
-  ({ mi, xp, result, fase, jogada } = s);
+  ({ mi, xp, result, fase, jogada } = s); carta = !!s.carta;
   hist = [];
-  if (fase === 'final') return finish();
-  if (fase === 'conquista' || !s.st) return nextMod();
-  st = { w:s.st.w, asked:new Set(s.st.asked), wrong:s.st.wrong, n:s.st.n };
-  step();
+  if (fase === 'conquista' || (!s.st && mi < MODS.length)) nextMod();
+  else if (s.st) st = { w:s.st.w, asked:new Set(s.st.asked), wrong:s.st.wrong, n:s.st.n };
+  fechar();
+  aviso(mi >= MODS.length ? 'Bem-vinda de volta! O portão do castelo está aberto.' : `Bem-vinda de volta, ${ELA}! Fale com o ${NPCS[mi].nome}.`);
 }
+// prepara a próxima missão; ela só abre quando a Vitória fala com o morador
 function nextMod() {
   mi++; hist = [];
-  if (mi >= MODS.length) { fase = 'final'; salvar(); return finish(true); }
+  if (mi >= MODS.length) { fase = 'final'; st = null; salvar(); return; }
   fase = 'missao';
   st = newState(MODS[mi]);
   const m = MODS[mi];
@@ -552,9 +687,13 @@ function nextMod() {
   const hoje = new Date(), diaHoje = hoje.getFullYear() === 2026 && hoje.getMonth() === 10 ? hoje.getDate() : 0;
   if (m.key === 'dia') m.cands.forEach((c, i) => { if (c.dt < diaHoje || result.filme?.s?.[c.dt] === '') st.w[i] = 0; });
   salvar();
+}
+function abrirMissao() {
+  if (st.n > 0 || st.wrong > 0) return step();  // missão já começada: continua de onde parou
+  const m = MODS[mi], n = NPCS[mi];
   const galeria = temFoto(m) ? `<p class="ou">Essas são as opções. Se já souber, toque e escolha direto:</p><div class="opcoes">${m.cands.map(c => cartao(m, c)).join('')}</div>` : '';
-  view(`<p class="kicker">Missão ${mi + 1} de ${MODS.length}</p><h2 class="title">${m.missao}</h2><p><b>${m.titulo}</b><br>${m.intro}</p>
-    <button class="primary">Aceitar missão${galeria ? ' e deixar ele adivinhar' : ''}</button>${galeria}`);
+  view(`<p class="kicker">Missão ${mi + 1} de ${MODS.length} · ${m.missao}</p><h2>${n.nome}</h2><p class="fala">“${n.fala}”</p><p><b>${m.titulo}</b><br>${m.intro}</p>
+    <button class="primary">Aceitar missão${galeria ? ' e deixar ele adivinhar' : ''}</button>${galeria}`, false, rostoNpc(mi));
   on('.primary', () => step());
   on('.opcoes button', v => done(m.cands[+v]));
 }
@@ -607,17 +746,23 @@ function sessao(c) {
   }
   view(`<p class="kicker">Anotado!</p><div class="big">${esc(c.n)}</div>
     <p>${ELE} confere os horários desse filme e te avisa a sessão.</p><button class="primary">Continuar</button>`);
-  on('button', celebrate);
+  on('.primary', celebrate);
 }
 function celebrate() {
   const m = MODS[mi], r = result[m.key], antes = lvl();
   const ganho = 50 + (r.critico ? 30 : 0);
   xp += ganho; fase = 'conquista'; salvar(); enviar();
   fanfarra(); confete();
+  const ultima = mi + 1 >= MODS.length;
   view(`<p class="kicker">Conquista desbloqueada</p><div class="reward"><img src="img/${m.key}.webp" alt=""></div><h2 class="title">${m.conquista[1]}</h2>
     <div class="xp">+${ganho} XP${r.critico ? ' · acerto crítico!' : ''}</div>${lvl() > antes ? `<div class="xp">⬆ Subiu para o nível ${lvl()}!</div>` : ''}
-    <p class="sub">${m.label}: <b>${esc(r.n)}</b></p><button class="primary">${mi + 1 < MODS.length ? 'Próxima missão' : 'Abrir o baú final'}</button>`, false, null, true);
-  on('button', nextMod);
+    <p class="sub">${m.label}: <b>${esc(r.n)}</b> foi para a mochila.</p><button class="primary">${ultima ? 'Ver o portão do castelo' : 'Voltar à vila'}</button>`, false, null, true);
+  const voltar = () => {
+    nextMod(); fechar();
+    if (ultima) { enviar(); aviso('Tu-tu-ruuu! O portão do castelo se abriu. Vá até lá!'); }
+    else aviso(`Próxima parada: ${NPCS[mi].nome}.`);
+  };
+  on('.primary', voltar); aoFechar = voltar;
 }
 function texto() {
   const r = result, p = r.presente;
@@ -629,6 +774,7 @@ function texto() {
 const slot = (ic, rotulo, valor, extra = '') => `<li><span class="slot"><img src="img/${ic}.webp" alt=""></span><div><b>${rotulo}</b><div class="v">${esc(valor)}</div>${extra}</div></li>`;
 function finish(agora) {
   const r = result, p = r.presente, t = texto();
+  carta = true; salvar();
   view(`<p class="kicker">Jornada completa · Nível ${lvl()}</p>
     <div class="carta">
       <h2 class="title">Carta da Aventureira</h2>
@@ -659,10 +805,11 @@ function finish(agora) {
     try { await navigator.clipboard.writeText(t); msg.textContent = 'Copiado! Agora é só colar pra ele.'; }
     catch { msg.innerHTML = `<textarea readonly>${esc(t)}</textarea>`; msg.querySelector('textarea').select(); }
   };
-  app.querySelector('#again').onclick = () => { zerar(); start(); };
+  app.querySelector('#again').onclick = () => { zerar(); pos.vitoria = { ...INICIO }; pos.lucas = { x:INICIO.x + 7, y:INICIO.y + .5 }; colocar('vitoria', 0); colocar('lucas', 0); start(); };
 }
 const bg = document.getElementById('bg');
 if (reduz || navigator.connection?.saveData) { bg.removeAttribute('autoplay'); bg.preload = 'none'; bg.pause(); }
+montarVila();
 start();
 </script>
 </body>

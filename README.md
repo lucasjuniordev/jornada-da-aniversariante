@@ -1,6 +1,6 @@
 # A Jornada da Aniversariante
 
-Jogo estilo RPG: a aventureira (Vitória) responde perguntas de sim/não e o escudeiro (Lucas) deduz o filme, o dia, a comida, o presente de aniversário e a comemoração que ela quer. Ela ganha XP, sobe de nível, desbloqueia conquistas e termina com uma carta selada. A cada missão concluída, as respostas chegam sozinhas ao escudeiro; o WhatsApp fica de reserva.
+Jogo estilo RPG numa vila para explorar: a aventureira (Vitória) anda pelo mapa (toque no chão), conversa com 5 moradores (Bilheteiro, Relojoeira, Cozinheira, Mercador e Arauto), cada um dono de uma missão, enche a mochila e, no fim, o portão do castelo se abre. Em cada missão ela responde perguntas de sim/não e o escudeiro (Lucas, que segue ela pela vila) deduz o filme, o dia, a comida, o presente de aniversário e a comemoração que ela quer. Ela ganha XP, sobe de nível, desbloqueia conquistas e termina com uma carta selada. A cada missão concluída, as respostas chegam sozinhas ao escudeiro; o WhatsApp fica de reserva.
 
 No ar em https://jornada.lucasjrdev.com · diário do escudeiro em https://jornada.lucasjrdev.com/escudeiro (pede a chave)
 
